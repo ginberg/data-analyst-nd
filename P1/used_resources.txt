@@ -2,7 +2,7 @@ Used resources
 
 https://en.wikipedia.org/wiki/Stroop_effect
 https://en.wikipedia.org/wiki/Student's_t-test#Paired_samples
-https://discussions.udacity.com/
+https://www.udacity.com/ (forum and statistics course)
 http://www.r-bloggers.com/overlapping-histogram-in-r/
 http://www.r-bloggers.com/two-sample-students-t-test-1/
 http://inbergict.nl/R.html
