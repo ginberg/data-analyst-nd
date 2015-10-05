@@ -1,0 +1,69 @@
+---
+title: 'Statistics: The science of Decisions'
+output: html_document
+---
+
+Background Information
+
+In a Stroop task, participants are presented with a list of words, with each word displayed in a color of ink. The participant’s task is to say out loud the color of the ink in which the word is printed. The task has two conditions: a congruent words condition, and an incongruent words condition. In the congruent words condition, the words being displayed are color words whose names match the colors in which they are printed: for example RED, BLUE. In the incongruent words condition, the words displayed are color words whose names do not match the colors in which they are printed: for example PURPLE, ORANGE. In each case, we measure the time it takes to name the ink colors in equally-sized lists. Each participant will go through and record a time from each condition.
+
+##Investigation
+
+###1 Independent and dependent variables
+
+The independent variable represents the input or cause, so this is the task condition. It can either be a congruent words condition or a incongruent words condition.
+
+The dependent variable reprenesents the output or effect, so this is the time it takes to name the ink colors in a list of words.
+
+###2. What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
+
+H0 : colour has no effect on measure time between the congruent and incongruent list of words.
+Ha: colour has an effect on measure time between the congruent and incongruent list of words.
+
+Because we have a sample with 2 values for each row (person) that we want to compare, we can use a t-test. The values are dependent because the value of the incongruent word is from the same person as the value of the congruent word. Therefore I am going to use a dependent t-test for paired samples.
+
+###3. Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
+
+
+```{r}
+# Read stroop performance csv file
+performance <- read.csv("data/stroop-performance.csv", sep=",", header=TRUE);
+# Split into congruent and incongruent and report mean and standard deviation
+congruent <- performance$Congruent;
+incongruent <- performance$Incongruent;
+mean(congruent); sd(congruent);
+mean(incongruent); sd(incongruent);
+```
+
+
+###4. Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.
+
+```{r}
+hist(congruent, col=rgb(1,0,0,0.5), main="Frquency of times for congruent vs incongruent word list", xlab="Time (s)")
+hist(incongruent, col=rgb(0,0,1,0.5), add=T)
+```
+
+In the histogram the data of both the congruent (red) and incongruent (blue) list is displayed. As can be seen, some people finished
+the congruent list within 10 seconds, where as the fastest for the inncongruent list is about 15sec. From 15 sec to 20sec
+there is quite some overlap between the 2 lists but after that it is almost only the incongruent data that is present.
+The difference in averages for the two lists as calculated in the last exercise (14sec vs 22 sec) is clearly visible in the plot.
+
+###5. Now, perform the statistical test and report your results.What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
+
+```{r}
+# calculate the difference between incongruent and congruent
+diff <- incongruent - congruent;
+mean(diff); sd(diff);
+# t critival value for a confidence level of 95%. Two sided so use 0.975
+qt(c(.025, .975), 23);
+# tvalue for a paired test
+t.test(incongruent, congruent, var.equal=FALSE, paired=TRUE)
+```
+
+In the code above, I have calculated the difference between the incongruent and congruent results and calculated the mean and standard deviation. For calculating the t critical value I have use a confidence level of 95%. Next, the t value is calculated. The t value is more than 8 and larger than t critical, so the alternative hypotheses applies: there is a significant difference in tim between the congruent and incongruent list.
+
+###6. Optional: What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect?Some research about the problem will be helpful for thinking about these two questions!
+
+The effects observed is caused by the mind that automatically determines the meaning of the word by reading its test. Then it checks if the color of the word is the same as the text. Because this process is not automated, it takes quite some time.
+I think a similar experiment is that you have to return the numnber of letters in a counting word (e.g. "three" or "four"). For the word "four" it is easier because the amount matches the word, whereas for "three" it is different and the mind need some extra time.
+
