@@ -5,5 +5,7 @@ https://en.wikipedia.org/wiki/Student's_t-test#Paired_samples
 https://www.udacity.com/ (forum and statistics course)
 http://www.r-bloggers.com/overlapping-histogram-in-r/
 http://www.r-bloggers.com/two-sample-students-t-test-1/
+http://www.statisticshowto.com/when-to-use-a-t-score-vs-z-score/
 http://inbergict.nl/R.html
 R studio Help
+
