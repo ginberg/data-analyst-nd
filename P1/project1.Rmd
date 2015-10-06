@@ -10,17 +10,26 @@ In a Stroop task, participants are presented with a list of words, with each wor
 ##Investigation
 
 ###1 Independent and dependent variables
-
+ 
 The independent variable represents the input or cause, so this is the task condition. It can either be a congruent words condition or a incongruent words condition.
 
 The dependent variable reprenesents the output or effect, so this is the time it takes to name the ink colors in a list of words.
 
 ###2. What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
 
-H0 : colour has no effect on measure time between the congruent and incongruent list of words.
-Ha: colour has an effect on measure time between the congruent and incongruent list of words.
+The data that is provided is a sample. With the hypothesis tests we want to explore if we can conclude if the population mean is different for congruent vs incongruent words condition. 
+Let μC and μI respectively be the congruent and incongruent population means and let H0 and Ha be the 0 alternative hypothesis. The hypotheses can be written as:
 
-Because we have a sample with 2 values for each row (person) that we want to compare, we can use a t-test. The values are dependent because the value of the incongruent word is from the same person as the value of the congruent word. Therefore I am going to use a dependent t-test for paired samples.
+H0 : μC = μI
+
+Ha : μC != μI
+
+When comparing means of populations, multiple tests can be used. A t-test or z-test can be used if the data is assumed to be normally distributed. 
+The choice of using a z-test or a t-test depends on the sample size and if the population´s standard deviation is known. In this experiment the sample size
+is smaller than 30 and the population´s standard devion is unknown. Therefore a t-test can be used in this case.
+Because each participant will do the test for the congruent as well as the incongruent words condition, the samples are paired and 
+a dependent t-test for paired samples will be used. 
+The test will be two tailed, because it is relevant to know if there is a difference in population means, not only if the difference is larger or smaller than 0. 
 
 ###3. Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
 
@@ -39,14 +48,17 @@ mean(incongruent); sd(incongruent);
 ###4. Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.
 
 ```{r}
-hist(congruent, col=rgb(1,0,0,0.5), main="Frquency of times for congruent vs incongruent word list", xlab="Time (s)")
-hist(incongruent, col=rgb(0,0,1,0.5), add=T)
+library(ggplot2);
+library(reshape2);
+performance$id <- seq.int(nrow(performance))
+d <- melt(performance, id.vars = "id", measure.vars = c("Congruent", "Incongruent"))
+ggplot(d, aes(x = value)) + facet_wrap(~variable, scales = "fixed") + geom_histogram(binwidth = 1) + xlab("performance (sec)") + ylab("frequency");
 ```
 
-In the histogram the data of both the congruent (red) and incongruent (blue) list is displayed. As can be seen, some people finished
+On the left plot the congruent data is plot and on the right side the incongruent data. As can be seen, some people finished
 the congruent list within 10 seconds, where as the fastest for the inncongruent list is about 15sec. From 15 sec to 20sec
 there is quite some overlap between the 2 lists but after that it is almost only the incongruent data that is present.
-The difference in averages for the two lists as calculated in the last exercise (14sec vs 22 sec) is clearly visible in the plot.
+The difference in averages for the two lists as calculated in the last exercise (14sec vs 22 sec) is clearly visible in the plots.
 
 ###5. Now, perform the statistical test and report your results.What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
 
