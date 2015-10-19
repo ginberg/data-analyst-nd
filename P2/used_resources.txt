@@ -1,0 +1,1 @@
+http://stackoverflow.com/questions/893657/how-do-i-calculate-r-squared-using-python-and-numpy
