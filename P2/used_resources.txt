@@ -1,1 +1,5 @@
+turnstile-weather-variables.pdf
+Udacity forum
+http://matplotlib.org/users/pyplot_tutorial.html
 http://stackoverflow.com/questions/893657/how-do-i-calculate-r-squared-using-python-and-numpy
+https://github.com/yihui/knitr-examples/blob/master/023-engine-python.Rmd
