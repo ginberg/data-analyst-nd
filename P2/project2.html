@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0085)file:///home/ger/admin/freelance/Courses/dataanalyst/data-analyst-nd/P2/project2.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <title>Analyzing the NYC Subway Dataset</title>
 
-<script src="./project2_files/require.min.js"></script>
-<script src="./project2_files/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
     /*!
@@ -142,17 +142,13 @@ div#notebook {
 </style>
 
 <!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="file:///home/ger/Downloads/custom.css">
+<link rel="stylesheet" href="custom.css">
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="./project2_files/MathJax.js"></script><style type="text/css">.MathJax_Preview {color: #888}
-#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
-#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
-.MathJax_Error {color: #CC0000; font-style: italic}
-</style>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
     <!-- MathJax configuration -->
-    <script type="text/x-mathjax-config;executed=true">
+    <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
         tex2jax: {
             inlineMath: [ ['$','$'], ["\\(","\\)"] ],
@@ -171,88 +167,8 @@ div#notebook {
     </script>
     <!-- End of mathjax configuration -->
 
-<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
-.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
-</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
-.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
-.MathJax_MenuItem {padding: 1px 2em; background: transparent}
-.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
-.MathJax_MenuActive .MathJax_MenuArrow {color: white}
-.MathJax_MenuArrow.RTL {left: .5em; right: auto}
-.MathJax_MenuCheck {position: absolute; left: .7em}
-.MathJax_MenuCheck.RTL {right: .7em; left: auto}
-.MathJax_MenuRadioCheck {position: absolute; left: .7em}
-.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
-.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
-.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
-.MathJax_MenuDisabled {color: GrayText}
-.MathJax_MenuActive {background-color: #606872; color: white}
-.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
-</style><style type="text/css">.MathJax_Preview .MJXc-math {color: inherit!important}
-</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
-#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
-#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
-#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
-</style><style type="text/css">.MathJax_Preview {color: #888}
-#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
-#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
-.MathJax_Error {color: #CC0000; font-style: italic}
-</style><style type="text/css">.MJXc-script {font-size: .8em}
-.MJXc-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
-.MJXc-bold {font-weight: bold}
-.MJXc-italic {font-style: italic}
-.MJXc-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
-.MJXc-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
-.MJXc-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
-.MJXc-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
-.MJXc-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
-.MJXc-largeop {font-size: 150%}
-.MJXc-largeop.MJXc-int {vertical-align: -.2em}
-.MJXc-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
-.MJXc-display {display: block; text-align: center; margin: 1em 0}
-.MJXc-math span {display: inline-block}
-.MJXc-box {display: block!important; text-align: center}
-.MJXc-box:after {content: " "}
-.MJXc-rule {display: block!important; margin-top: .1em}
-.MJXc-char {display: block!important}
-.MJXc-mo {margin: 0 .15em}
-.MJXc-mfrac {margin: 0 .125em; vertical-align: .25em}
-.MJXc-denom {display: inline-table!important; width: 100%}
-.MJXc-denom > * {display: table-row!important}
-.MJXc-surd {vertical-align: top}
-.MJXc-surd > * {display: block!important}
-.MJXc-script-box > *  {display: table!important; height: 50%}
-.MJXc-script-box > * > * {display: table-cell!important; vertical-align: top}
-.MJXc-script-box > *:last-child > * {vertical-align: bottom}
-.MJXc-script-box > * > * > * {display: block!important}
-.MJXc-mphantom {visibility: hidden}
-.MJXc-munderover {display: inline-table!important}
-.MJXc-over {display: inline-block!important; text-align: center}
-.MJXc-over > * {display: block!important}
-.MJXc-munderover > * {display: table-row!important}
-.MJXc-mtable {vertical-align: .25em; margin: 0 .125em}
-.MJXc-mtable > * {display: inline-table!important; vertical-align: middle}
-.MJXc-mtr {display: table-row!important}
-.MJXc-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
-.MJXc-mtr > .MJXc-mtd:first-child {padding-left: 0}
-.MJXc-mtr:first-child > .MJXc-mtd {padding-top: 0}
-.MJXc-mlabeledtr {display: table-row!important}
-.MJXc-mlabeledtr > .MJXc-mtd:first-child {padding-left: 0}
-.MJXc-mlabeledtr:first-child > .MJXc-mtd {padding-top: 0}
-.MJXc-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
-.MJXc-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
-.MJXc-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
-.MJXc-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
-.MJXc-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
-.MJXc-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
-.MJXc-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
-.MJXc-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
-.MJXc-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
-.MJXc-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
-.MJXc-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
-.MathJax_CHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
-</style></head>
-<body><div id="MathJax_Message" style="display: none;"></div><div id="MathJax_Message" style="display: none;"></div>
+</head>
+<body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
@@ -261,9 +177,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Analyzing-the-NYC-Subway-Dataset">Analyzing the NYC Subway Dataset<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Analyzing-the-NYC-Subway-Dataset">¶</a></h1><h2 id="Background-Information">Background Information<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Background-Information">¶</a></h2><p>In this project, we look at the NYC Subway data and figure out if more people ride the subway when it is raining versus when it is not raining.
+<h1 id="Analyzing-the-NYC-Subway-Dataset">Analyzing the NYC Subway Dataset<a class="anchor-link" href="#Analyzing-the-NYC-Subway-Dataset">&#182;</a></h1><h2 id="Background-Information">Background Information<a class="anchor-link" href="#Background-Information">&#182;</a></h2><p>In this project, we look at the NYC Subway data and figure out if more people ride the subway when it is raining versus when it is not raining.
 The dataset that is available contains data about turnstiles at different stations as well as weather conditions.</p>
-<h2 id="Statistical-Test">Statistical Test<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Statistical-Test">¶</a></h2><h3 id="Independent,-dependent-variables">Independent, dependent variables<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Independent,-dependent-variables">¶</a></h3><p>First, let's see what kind of data is in the dataset by exploring the column names.</p>
+<h2 id="Statistical-Test">Statistical Test<a class="anchor-link" href="#Statistical-Test">&#182;</a></h2><h3 id="Independent,-dependent-variables">Independent, dependent variables<a class="anchor-link" href="#Independent,-dependent-variables">&#182;</a></h3><p>First, let's see what kind of data is in the dataset by exploring the column names.</p>
 
 </div>
 </div>
@@ -274,7 +190,7 @@ The dataset that is available contains data about turnstiles at different statio
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="n">filename</span><span class="o">=</span><span class="s">'data/improved-dataset/turnstile_weather_v2.csv'</span>
+<span class="n">filename</span><span class="o">=</span><span class="s">&#39;data/improved-dataset/turnstile_weather_v2.csv&#39;</span>
 <span class="n">turnstile_weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="k">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">turnstile_weather</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </pre></div>
@@ -289,7 +205,7 @@ The dataset that is available contains data about turnstiles at different statio
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>['UNIT', 'DATEn', 'TIMEn', 'ENTRIESn', 'EXITSn', 'ENTRIESn_hourly', 'EXITSn_hourly', 'datetime', 'hour', 'day_week', 'weekday', 'station', 'latitude', 'longitude', 'conds', 'fog', 'precipi', 'pressurei', 'rain', 'tempi', 'wspdi', 'meanprecipi', 'meanpressurei', 'meantempi', 'meanwspdi', 'weather_lat', 'weather_lon']
+<pre>[&apos;UNIT&apos;, &apos;DATEn&apos;, &apos;TIMEn&apos;, &apos;ENTRIESn&apos;, &apos;EXITSn&apos;, &apos;ENTRIESn_hourly&apos;, &apos;EXITSn_hourly&apos;, &apos;datetime&apos;, &apos;hour&apos;, &apos;day_week&apos;, &apos;weekday&apos;, &apos;station&apos;, &apos;latitude&apos;, &apos;longitude&apos;, &apos;conds&apos;, &apos;fog&apos;, &apos;precipi&apos;, &apos;pressurei&apos;, &apos;rain&apos;, &apos;tempi&apos;, &apos;wspdi&apos;, &apos;meanprecipi&apos;, &apos;meanpressurei&apos;, &apos;meantempi&apos;, &apos;meanwspdi&apos;, &apos;weather_lat&apos;, &apos;weather_lon&apos;]
 </pre>
 </div>
 </div>
@@ -307,14 +223,14 @@ The dataset that is available contains data about turnstiles at different statio
 How to measure if the subway is used more? Well, the data contains the number of entries at some units where a unit is a data collector of multiple turnstiles. ENTRIESn is the reading of cummulative turnstile entries from the remote unit and ENTRIESn_hourly indicates the difference in ENTRIES from the previous REGULAR reading. It seems like ENTRIESn_hourly is a good measure of how many people will use the subway.</p>
 <p>Therefore, the independent variable is the rain. It can either be a 0 (no rain) or 1 (rain)
 The dependent variable is the the number of entries since the last reading (ENTRIESn_hourly)</p>
-<h3 id="Hypothesis-and-chosen-test">Hypothesis and chosen test<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Hypothesis-and-chosen-test">¶</a></h3><p>The data that is provided is a sample. With the hypothesis tests we want to explore if we can conclude that the subway is used more when it is raining. 
+<h3 id="Hypothesis-and-chosen-test">Hypothesis and chosen test<a class="anchor-link" href="#Hypothesis-and-chosen-test">&#182;</a></h3><p>The data that is provided is a sample. With the hypothesis tests we want to explore if we can conclude that the subway is used more when it is raining. 
 Let μR and μN respectively be the population means for ENTRIESn_hourly when it is not raining and when it is raining. Let H0 and Ha respectively be the 0 and alternative hypothesis. The hypotheses can be written as:</p>
 <p>H0 : μR = μN</p>
 <p>Ha : μR &gt; μN</p>
 <p>When comparing means of populations, multiple tests can be used. A t-test or z-test can be used if the data is assumed to be normally distributed. 
 However, the data from our sample is not normally distributed if we look at the plot below. Mann–Whitney´s U test is a nonparametrict test that can be used if we don't assume that the data follows a certain distribution. Because we don´ t assume any underlying distribution this test will be used. The test will be one tailed, because it is only interesting to know if <strong>more</strong> people use the subway when it is raining. The p critical value is 0.05, since this is quite common.</p>
-<p><img src="./project2_files/histogram_rain_norain.png" alt="Histogram of rain vs norain values"></p>
-<h3 id="Results-from-executing-the-test">Results from executing the test<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Results-from-executing-the-test">¶</a></h3><p>Below the results from the test can be found.</p>
+<p><img src="plots/histogram_rain_norain.png" alt="Histogram of rain vs norain values"></p>
+<h3 id="Results-from-executing-the-test">Results from executing the test<a class="anchor-link" href="#Results-from-executing-the-test">&#182;</a></h3><p>Below the results from the test can be found.</p>
 
 </div>
 </div>
@@ -326,14 +242,14 @@ However, the data from our sample is not normally distributed if we look at the 
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
-<span class="n">rain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'ENTRIESn_hourly'</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'rain'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">norain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'ENTRIESn_hourly'</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'rain'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">"length norain df vs rain df:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">"Norain mean + std:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">norain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">"Rain mean + std:"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="n">rain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;ENTRIESn_hourly&#39;</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;rain&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">norain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;ENTRIESn_hourly&#39;</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;rain&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;length norain df vs rain df:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;Norain mean + std:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">norain</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;Rain mean + std:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
 <span class="n">U</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">mannwhitneyu</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">norain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">"U-statistic:"</span><span class="p">,</span> <span class="n">U</span>
-<span class="k">print</span> <span class="s">"p-value:"</span><span class="p">,</span> <span class="n">p</span>
+<span class="k">print</span> <span class="s">&quot;U-statistic:&quot;</span><span class="p">,</span> <span class="n">U</span>
+<span class="k">print</span> <span class="s">&quot;p-value:&quot;</span><span class="p">,</span> <span class="n">p</span>
 </pre></div>
 
 </div>
@@ -365,10 +281,10 @@ p-value: 2.74106957124e-06
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The mannwhitney u test is per default one-tailed.  As can be seen, the p-value is a lot smaller than the p critical value of 0.05. Therefore it is very unlikely that the population means are equal, so the alternative hypothesis applies: more people ride the subway when it is raining.</p>
-<h2 id="Linear-Regression">Linear Regression<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Linear-Regression">¶</a></h2><p>Machine learning is a branch of artificial intelligence focused on constructing systems that learn from large amounts of data to make predictions.
+<h2 id="Linear-Regression">Linear Regression<a class="anchor-link" href="#Linear-Regression">&#182;</a></h2><p>Machine learning is a branch of artificial intelligence focused on constructing systems that learn from large amounts of data to make predictions.
 Linear Regression is one of the most used models in machine learning.</p>
-<h3 id="Regression-model">Regression model<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Regression-model">¶</a></h3><p>To create a lineair regression model I will use the Ordinary Least Squares (OLS) from Statsmodels.</p>
-<h3 id="Features">Features<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Features">¶</a></h3><p>I have used the following features in the regression model</p>
+<h3 id="Regression-model">Regression model<a class="anchor-link" href="#Regression-model">&#182;</a></h3><p>To create a lineair regression model I will use the Ordinary Least Squares (OLS) from Statsmodels.</p>
+<h3 id="Features">Features<a class="anchor-link" href="#Features">&#182;</a></h3><p>I have used the following features in the regression model</p>
 <ul>
 <li>rain: because in the statistical test, it is clear that rain matters.</li>
 <li>hour: because there are probably more people taking the subway in peak hours.</li>
@@ -376,7 +292,7 @@ Linear Regression is one of the most used models in machine learning.</p>
 <li>weekday: because I think some days are more populair to work than others.</li>
 <li>UNIT (dummy variable): because when I used this, it drastically improved my R2 value.</li>
 </ul>
-<h3 id="Parameters-of-non-dummy-features-and-R-squared">Parameters of non-dummy features and R-squared<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Parameters-of-non-dummy-features-and-R-squared">¶</a></h3><p>below the parameters of the non-dummy features and R-squared are shown</p>
+<h3 id="Parameters-of-non-dummy-features-and-R-squared">Parameters of non-dummy features and R-squared<a class="anchor-link" href="#Parameters-of-non-dummy-features-and-R-squared">&#182;</a></h3><p>below the parameters of the non-dummy features and R-squared are shown</p>
 
 </div>
 </div>
@@ -390,10 +306,10 @@ Linear Regression is one of the most used models in machine learning.</p>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 
 <span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-    <span class="sd">"""</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform linear regression given a data set with an arbitrary number of features. </span>
 <span class="sd">    This can be the same code as in the lesson #3 exercise.</span>
-<span class="sd">    """</span> 
+<span class="sd">    &quot;&quot;&quot;</span> 
     <span class="n">features</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -403,28 +319,28 @@ Linear Regression is one of the most used models in machine learning.</p>
     
 
 <span class="k">def</span> <span class="nf">compute_r_squared</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
-    <span class="sd">'''</span>
+    <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Calculates R sqared based on given data and predictions</span>
-<span class="sd">    '''</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">SST</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="n">SSREG</span> <span class="o">=</span> <span class="p">((</span><span class="n">predictions</span> <span class="o">-</span> <span class="n">data</span><span class="p">)</span> <span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="n">r_squared</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">SSREG</span> <span class="o">/</span> <span class="n">SST</span>
     
     <span class="k">return</span> <span class="n">r_squared</span>
 
-<span class="n">filename</span><span class="o">=</span><span class="s">'data/improved-dataset/turnstile_weather_v2.csv'</span>
+<span class="n">filename</span><span class="o">=</span><span class="s">&#39;data/improved-dataset/turnstile_weather_v2.csv&#39;</span>
 <span class="n">turnstile_weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="n">features</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[[</span><span class="s">'rain'</span><span class="p">,</span> <span class="s">'hour'</span><span class="p">,</span> <span class="s">'meantempi'</span><span class="p">,</span> <span class="s">'weekday'</span><span class="p">]]</span>
-<span class="n">dummy_units</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'UNIT'</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s">'unit'</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[[</span><span class="s">&#39;rain&#39;</span><span class="p">,</span> <span class="s">&#39;hour&#39;</span><span class="p">,</span> <span class="s">&#39;meantempi&#39;</span><span class="p">,</span> <span class="s">&#39;weekday&#39;</span><span class="p">]]</span>
+<span class="n">dummy_units</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;UNIT&#39;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;unit&#39;</span><span class="p">)</span>
 <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dummy_units</span><span class="p">)</span>
-<span class="n">values</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">'ENTRIESn_hourly'</span><span class="p">]</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;ENTRIESn_hourly&#39;</span><span class="p">]</span>
 <span class="n">intercept</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">intercept</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">"param-rain"</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">'rain'</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">"param-hour"</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">'hour'</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">"param-meantempi"</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">'meantempi'</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">"param-weekday"</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">'weekday'</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">"r-squared:"</span><span class="p">,</span> <span class="n">compute_r_squared</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;param-rain&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;rain&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;param-hour&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;hour&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;param-meantempi&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;meantempi&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;param-weekday&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;weekday&#39;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;r-squared:&quot;</span><span class="p">,</span> <span class="n">compute_r_squared</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -456,8 +372,8 @@ r-squared: 0.482340215273
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The R2 value is about 0.48, so what does this mean? R2 is a measure of how well the data fits the regression model. The value of R2 is 1 for a perfect fit and 0 when there is no fit, so in this case the fit is reasonable.</p>
-<h2 id="Visualization">Visualization<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Visualization">¶</a></h2><p>Below a visualization can be found about the ridership by time of day. On the x-axis the hour is give and on the y-axis the number of entries.</p>
-<p><img src="./project2_files/number_of_entries_per_hour.png" alt="Histogram of rain vs norain values"></p>
+<h2 id="Visualization">Visualization<a class="anchor-link" href="#Visualization">&#182;</a></h2><p>Below a visualization can be found about the ridership by time of day. On the x-axis the hour is give and on the y-axis the number of entries.</p>
+<p><img src="plots/number_of_entries_per_hour.png" alt="Histogram of rain vs norain values"></p>
 
 </div>
 </div>
@@ -467,10 +383,10 @@ r-squared: 0.482340215273
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conclusion">Conclusion<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Conclusion">¶</a></h2><h4 id="Do-more-people-ride-the-NYC-subway-when-it-is-raining-or-when-it-is-not-raining?">Do more people ride the NYC subway when it is raining or when it is not raining?<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Do-more-people-ride-the-NYC-subway-when-it-is-raining-or-when-it-is-not-raining?">¶</a></h4><p>From the results obtained from the statistical test and lineair regression, we can say in general that more people ride the NYC subway when it is raining. However, rain is not a very good predictor.</p>
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><h4 id="Do-more-people-ride-the-NYC-subway-when-it-is-raining-or-when-it-is-not-raining?">Do more people ride the NYC subway when it is raining or when it is not raining?<a class="anchor-link" href="#Do-more-people-ride-the-NYC-subway-when-it-is-raining-or-when-it-is-not-raining?">&#182;</a></h4><p>From the results obtained from the statistical test and lineair regression, we can say in general that more people ride the NYC subway when it is raining. However, rain is not a very good predictor.</p>
 <p>In the statistical test, the conclusion is that our sample supports the alternative hypothesis, the population mean for rain is greater that for non rain.</p>
 <p>In our lineair regression model, the influence of the rain on the ouput is negative. I have also tried to leave out the feature rain and it almost didn't change the R2 value. The purpose of the regression model is to be able to predict the outcome based on certain features. However, these features influence each other. If one is left out, it will change the param values of the other features. The dummy variable UNIT has a big influence on R2. This leads to the conclusion that UNIT is a good predictor, but rain isn't.</p>
-<h2 id="Reflection">Reflection<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Reflection">¶</a></h2><h4 id="Shortcomings">Shortcomings<a class="anchor-link" href="file:///home/ger/Downloads/Analyzing%20the%20NYC%20Subway%20Dataset%20(4).html#Shortcomings">¶</a></h4><p>There are some shortcomings in my analysis.</p>
+<h2 id="Reflection">Reflection<a class="anchor-link" href="#Reflection">&#182;</a></h2><h4 id="Shortcomings">Shortcomings<a class="anchor-link" href="#Shortcomings">&#182;</a></h4><p>There are some shortcomings in my analysis.</p>
 <ul>
 <li>dataset: the dataset contains a lot more rows for non-rain than for rain. It would be ideal to have equal number of rows for both cases.</li>
 <li>regression model: the chosen regression model OLS (ordinary least squares) is quite simplistic and has some drawbacks. It is sensitive for outliers and as seen in the figure of entries per hour, there are some outliers. Next to this, OLS performs bad when features are put into the model, that have a dependence between them. </li>
@@ -481,6 +397,5 @@ r-squared: 0.482340215273
 </div>
     </div>
   </div>
-
-
-</body></html>
+</body>
+</html>
