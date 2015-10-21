@@ -12,6 +12,7 @@ import pandasql as pdsql
 import matplotlib.pyplot as plt
 import scipy.stats
 import statsmodels.api as sm
+from ggplot import *
 
 def linear_regression(features, values):
     """
@@ -45,18 +46,21 @@ print turnstile_weather['rain'].describe()
 rain = turnstile_weather['ENTRIESn_hourly'][turnstile_weather['rain'] == 1]
 norain = turnstile_weather['ENTRIESn_hourly'][turnstile_weather['rain'] == 0]
 
-print "rain-mean:", np.mean(rain_data)
-print "rain-std:",np.std(rain_data)
-print "norain-mean:",np.mean(norain_data)
-print "norain-mean:",np.std(norain_data)
+print len(rain)
+print len(norain)
+
+#print "rain-mean:", np.mean(rain_data)
+#print "rain-std:",np.std(rain_data)
+#print "norain-mean:",np.mean(norain_data)
+#print "norain-mean:",np.std(norain_data)
 
 plt.figure()
 plt.xlabel('ENTRIESn_hourly ')
 plt.ylabel('Frequency')
 plt.title('The number of turnstile entries in norain vs rain conditions')
-plt.text(2000, 8000, r'blue=no rain, green=rain')
+plt.text(2000, 5000, r'blue=no rain, green=rain')
 x = [norain, rain]
-plt.hist(x, range=(0, 4500))
+plt.hist(x, range=(0, 4500), bins=30)
 
 U, p = scipy.stats.mannwhitneyu(rain, norain)
 print "U-statistic:", U
@@ -71,16 +75,18 @@ features = turnstile_weather[['rain', 'hour', 'meantempi', 'weekday']]
 dummy_units = pandas.get_dummies(turnstile_weather['UNIT'], prefix='unit')
 features = features.join(dummy_units)
 # Values
-values = turnstile_weather['ENTRIESn_hourly']
+#values = turnstile_weather['ENTRIESn_hourly']
 # Perform linear regression
-intercept, params = linear_regression(features, values)
+#intercept, params = linear_regression(features, values)
 
 #print "intercept, params", intercept, params
-predictions = intercept + np.dot(features, params)
-print "predictions:", predictions
+#predictions = intercept + np.dot(features, params)
+#print "predictions:", predictions
+#print "r-squared:", compute_r_squared(values, predictions)
 
-print "r-squared:", compute_r_squared(values, predictions)
-
+plot = ggplot(turnstile_weather, aes(x='hour', y='ENTRIESn_hourly', color='rain')) + \
+    geom_point() + xlab('hour of day') + ylab('Number of entries') + ggtitle('Number of entries per hour')
+print plot
 
 
 
