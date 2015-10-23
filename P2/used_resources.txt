@@ -1,6 +1,8 @@
 turnstile-weather-variables.pdf
+https://storage.googleapis.com/supplemental_media/udacityu/649959144/MannWhitneyUTest.pdf
 Udacity forum
 http://matplotlib.org/users/pyplot_tutorial.html
 http://stackoverflow.com/questions/893657/how-do-i-calculate-r-squared-using-python-and-numpy
 http://blog.minitab.com/blog/adventures-in-statistics/how-high-should-r-squared-be-in-regression-analysis
 http://www.clockbackward.com/2009/06/18/ordinary-least-squares-linear-regression-flaws-problems-and-pitfalls/
+http://blog.minitab.com/blog/adventures-in-statistics/why-you-need-to-check-your-residual-plots-for-regression-analysis

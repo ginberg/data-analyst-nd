@@ -46,6 +46,8 @@ print turnstile_weather['rain'].describe()
 rain = turnstile_weather['ENTRIESn_hourly'][turnstile_weather['rain'] == 1]
 norain = turnstile_weather['ENTRIESn_hourly'][turnstile_weather['rain'] == 0]
 
+print scipy.stats.shapiro(rain)
+print scipy.stats.shapiro(norain)
 print len(rain)
 print len(norain)
 
@@ -72,21 +74,39 @@ print "p-value:", p
 #section 2 - lineair regressioon
 
 features = turnstile_weather[['rain', 'hour', 'meantempi', 'weekday']]
-dummy_units = pandas.get_dummies(turnstile_weather['UNIT'], prefix='unit')
+dummy_units = pd.get_dummies(turnstile_weather['UNIT'], prefix='unit')
 features = features.join(dummy_units)
 # Values
-#values = turnstile_weather['ENTRIESn_hourly']
+values = turnstile_weather['ENTRIESn_hourly']
 # Perform linear regression
-#intercept, params = linear_regression(features, values)
+intercept, params = linear_regression(features, values)
 
-#print "intercept, params", intercept, params
-#predictions = intercept + np.dot(features, params)
+print "intercept, params", intercept, params
+predictions = intercept + np.dot(features, params)
 #print "predictions:", predictions
 #print "r-squared:", compute_r_squared(values, predictions)
 
-plot = ggplot(turnstile_weather, aes(x='hour', y='ENTRIESn_hourly', color='rain')) + \
-    geom_point() + xlab('hour of day') + ylab('Number of entries') + ggtitle('Number of entries per hour')
-print plot
+plt.figure()
+(turnstile_weather['ENTRIESn_hourly'] - predictions).hist(bins=100)
+
+
+#pansql and ggplot
+q = """select avg(ENTRIESn_hourly), rain from turnstile_weather group by hour, rain"""
+avg_entries_hourly_hour = pdsql.sqldf(q.lower(), locals())
+
+print avg_entries_hourly_hour
+
+#q = """select distinct(hour) from turnstile_weather order by hour asc"""
+#avg_entries_hourly_hour['ordered_hours'] = pdsql.sqldf(q.lower(), locals())
+avg_entries_hourly_hour['ordered_hours'] = ['0','0','4','4','8','8','12','12','16','16','20','20']
+
+print avg_entries_hourly_hour
+#==============================================================================
+# 
+# plot = ggplot(avg_entries_hourly_hour, aes(x='ordered_hours', y='avg(entriesn_hourly)', color='rain')) + \
+#     geom_point() + geom_line() + xlim(0, 20) + xlab('hour of day') + ylab('Number of entries') + ggtitle('Average number of entries per hour')
+# print plot
+#==============================================================================
 
 
 

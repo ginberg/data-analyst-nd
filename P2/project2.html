@@ -186,7 +186,7 @@ The dataset that is available contains data about turnstiles at different statio
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
@@ -223,33 +223,23 @@ The dataset that is available contains data about turnstiles at different statio
 How to measure if the subway is used more? Well, the data contains the number of entries at some units where a unit is a data collector of multiple turnstiles. ENTRIESn is the reading of cummulative turnstile entries from the remote unit and ENTRIESn_hourly indicates the difference in ENTRIES from the previous REGULAR reading. It seems like ENTRIESn_hourly is a good measure of how many people will use the subway.</p>
 <p>Therefore, the independent variable is the rain. It can either be a 0 (no rain) or 1 (rain)
 The dependent variable is the the number of entries since the last reading (ENTRIESn_hourly)</p>
-<h3 id="Hypothesis-and-chosen-test">Hypothesis and chosen test<a class="anchor-link" href="#Hypothesis-and-chosen-test">&#182;</a></h3><p>The data that is provided is a sample. With the hypothesis tests we want to explore if we can conclude that the subway is used more when it is raining. 
-Let μR and μN respectively be the population means for ENTRIESn_hourly when it is not raining and when it is raining. Let H0 and Ha respectively be the 0 and alternative hypothesis. The hypotheses can be written as:</p>
-<p>H0 : μR = μN</p>
-<p>Ha : μR &gt; μN</p>
+<h3 id="Normal-distribution-check">Normal distribution check<a class="anchor-link" href="#Normal-distribution-check">&#182;</a></h3><p>The data that is provided is a sample. With the hypothesis tests we want to explore if we can conclude that the subway is used more when it is raining.</p>
 <p>When comparing means of populations, multiple tests can be used. A t-test or z-test can be used if the data is assumed to be normally distributed. 
-However, the data from our sample is not normally distributed if we look at the plot below. Mann–Whitney´s U test is a nonparametrict test that can be used if we don't assume that the data follows a certain distribution. Because we don´ t assume any underlying distribution this test will be used. The test will be one tailed, because it is only interesting to know if <strong>more</strong> people use the subway when it is raining. The p critical value is 0.05, since this is quite common.</p>
-<p><img src="plots/histogram_rain_norain.png" alt="Histogram of rain vs norain values"></p>
-<h3 id="Results-from-executing-the-test">Results from executing the test<a class="anchor-link" href="#Results-from-executing-the-test">&#182;</a></h3><p>Below the results from the test can be found.</p>
+However, the data from our sample is not normally distributed if we look at the plot below. Also the Shapiro test indicates this, since the p values are 0.0, so the null hypothesis that the data is from a normal distribution is rejected.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="n">rain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;ENTRIESn_hourly&#39;</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;rain&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">norain</span> <span class="o">=</span> <span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;ENTRIESn_hourly&#39;</span><span class="p">][</span><span class="n">turnstile_weather</span><span class="p">[</span><span class="s">&#39;rain&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
-<span class="k">print</span> <span class="s">&quot;length norain df vs rain df:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&quot;Norain mean + std:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">norain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&quot;Rain mean + std:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
-<span class="n">U</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">mannwhitneyu</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">norain</span><span class="p">)</span>
-<span class="k">print</span> <span class="s">&quot;U-statistic:&quot;</span><span class="p">,</span> <span class="n">U</span>
-<span class="k">print</span> <span class="s">&quot;p-value:&quot;</span><span class="p">,</span> <span class="n">p</span>
+<span class="k">print</span> <span class="s">&quot;shapiro test norain:&quot;</span><span class="p">,</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">shapiro</span><span class="p">(</span><span class="n">norain</span><span class="p">)</span> 
+<span class="k">print</span> <span class="s">&quot;shapiro test rain:&quot;</span><span class="p">,</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">shapiro</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> 
 </pre></div>
 
 </div>
@@ -262,11 +252,8 @@ However, the data from our sample is not normally distributed if we look at the 
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>length norain df vs rain df: 33064 9585
-Norain mean + std: 1845.53943866 2878.72731433
-Rain mean + std: 2028.19603547 3189.26699226
-U-statistic: 153635120.5
-p-value: 2.74106957124e-06
+<pre>shapiro test norain: (0.5956180691719055, 0.0)
+shapiro test rain: (0.5938820838928223, 0.0)
 </pre>
 </div>
 </div>
@@ -280,7 +267,69 @@ p-value: 2.74106957124e-06
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The mannwhitney u test is per default one-tailed.  As can be seen, the p-value is a lot smaller than the p critical value of 0.05. Therefore it is very unlikely that the population means are equal, so the alternative hypothesis applies: more people ride the subway when it is raining.</p>
+<p><img src="plots/histogram_rain_norain.png" alt="Histogram of rain vs norain values"></p>
+<p>The histogram displays the frequency of the ENTRIESn_hourly values split by rain. As can be seen, the lowest ENTRIESn_hourly have the highest frequency. 
+For increasing hourly entries, the frequency drops, this trend holds for rain as well as no rain. When comparing rain vs norain, it is clear that the rain situation has a lot less values.
+This is quite logical, cause most of the time it is not raining, so there is less data available.</p>
+<h3 id="Non-parametric-test-and-Hypothesis">Non parametric test and Hypothesis<a class="anchor-link" href="#Non-parametric-test-and-Hypothesis">&#182;</a></h3><p>Because the data is not normally distributed, a t or z test cannot be used, but a non parametric test can be used.
+Mann–Whitney´s U test is a nonparametrict test that can be used if we don't assume that the data follows a certain distribution. Because we don´t assume any underlying distribution this test will be used.</p>
+<p>Mann-Whitney's U test works as follows: when we draw at random some values from each population, is the chance that<br>
+a higher value is obtained for 1 population is equal to 0.5? Let Xn be some random values from the no rain population and Xr random values from the rain population. Let H0 and Ha respectively be the 0 and alternative hypothesis. The hypotheses can thus be written as:</p>
+<p>H0 : P (Xn &gt; Xr) = 0.5</p>
+<p>Ha : P (Xn &gt; Xr) != 0.5</p>
+<p>The test will be two tailed, since I don't want to make an assumption about whether the chance would be less or greather than 0.5. The p critical value is 0.05, since this is quite common.</p>
+<h3 id="Results-from-executing-the-test">Results from executing the test<a class="anchor-link" href="#Results-from-executing-the-test">&#182;</a></h3><p>Below the results from the test can be found.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="k">print</span> <span class="s">&quot;length norain df vs rain df:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;Norain mean, median:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">norain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">norain</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;Rain mean, median:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">mannwhitneyu</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">norain</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;U-statistic:&quot;</span><span class="p">,</span> <span class="n">U</span>
+<span class="k">print</span> <span class="s">&quot;p-value one sided:&quot;</span><span class="p">,</span> <span class="n">p</span>
+<span class="k">print</span> <span class="s">&quot;p-value two sided:&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>length norain df vs rain df: 33064 9585
+Norain mean, median: 1845.53943866 893.0
+Rain mean, median: 2028.19603547 939.0
+U-statistic: 153635120.5
+p-value one sided: 2.74106957124e-06
+p-value two sided: 5.48213914249e-06
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The mannwhitney u test is per default one-tailed. Because the test we want to perform is two tailed, the p-value should by multiplied by 2. 
+As can be seen, the (two sided) p-value is a lot smaller than the p critical value of 0.05. Therefore it is very unlikely that P (Xn &gt; Xr) = 0.5 , so the alternative hypothesis applies: the chance that a random sample from the no rain population is greater that a sample from the rain population is not 0.5. 
+Can we conclude that the chance is greater than 0.5 or small than 0.5? Well, by looking at the mean and median values it is clear that these values are higher for rain. Thus on average there are more hourly entries and the 50% value is larger in case of rain. Therefore, we can conclude the chance is less than 0.5.</p>
 <h2 id="Linear-Regression">Linear Regression<a class="anchor-link" href="#Linear-Regression">&#182;</a></h2><p>Machine learning is a branch of artificial intelligence focused on constructing systems that learn from large amounts of data to make predictions.
 Linear Regression is one of the most used models in machine learning.</p>
 <h3 id="Regression-model">Regression model<a class="anchor-link" href="#Regression-model">&#182;</a></h3><p>To create a lineair regression model I will use the Ordinary Least Squares (OLS) from Statsmodels.</p>
@@ -299,7 +348,7 @@ Linear Regression is one of the most used models in machine learning.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -371,9 +420,12 @@ r-squared: 0.482340215273
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The R2 value is about 0.48, so what does this mean? R2 is a measure of how well the data fits the regression model. The value of R2 is 1 for a perfect fit and 0 when there is no fit, so in this case the fit is reasonable.</p>
-<h2 id="Visualization">Visualization<a class="anchor-link" href="#Visualization">&#182;</a></h2><p>Below a visualization can be found about the ridership by time of day. On the x-axis the hour is give and on the y-axis the number of entries.</p>
-<p><img src="plots/number_of_entries_per_hour.png" alt="Histogram of rain vs norain values"></p>
+<p>The R2 value is about 0.48, so what does this mean? R2 is a measure of how well the data fits the regression model and it is also defined by the percentage of the response variable variation that is explained by a linear model. The value of R2 is 1 for a perfect fit and 0 when there is no fit. So and R2 value of 0.48 means that almost 50% of the variation in ridership is explained by the model.</p>
+<p>But, R2 doesn't say everything because a high value is not always indicating that there is a good model fit. This can be the case when the regression line is sytematically over- and under predicting the data. We can check this by plotting the residuals, these are defined by the difference of the observed value and the predicted value. Below the residuals are plotted.</p>
+<p><img src="plots/residual_plot.png" alt="Residual plot"></p>
+<p>For a good model fit, the residuals shouldn't be very large or very small all of the time, because the residual is in fact a stochastic error and we should not be able to predict it. Therefore the residuals should be centered around zero and follow a normal distribution. The residual plot looks quite like a normal distribution, so we can say that the model is good.</p>
+<h2 id="Visualization-of-ridership-by-time-of-day">Visualization of ridership by time of day<a class="anchor-link" href="#Visualization-of-ridership-by-time-of-day">&#182;</a></h2><p>Below a visualization can be found about the ridership by time of day. On the x-axis the hour is give and on the y-axis the average number of entries. The red color indicates no rain and the blue color indicates rain situation. At the start of the day there is almost no difference, but when the day progresses and it gets busier, the difference get bigger (except for the dip at 16h).</p>
+<p><img src="plots/avg_number_of_entries_per_hour.png" alt="Histogram of rain vs norain values"></p>
 
 </div>
 </div>
@@ -388,7 +440,8 @@ r-squared: 0.482340215273
 <p>In our lineair regression model, the influence of the rain on the ouput is negative. I have also tried to leave out the feature rain and it almost didn't change the R2 value. The purpose of the regression model is to be able to predict the outcome based on certain features. However, these features influence each other. If one is left out, it will change the param values of the other features. The dummy variable UNIT has a big influence on R2. This leads to the conclusion that UNIT is a good predictor, but rain isn't.</p>
 <h2 id="Reflection">Reflection<a class="anchor-link" href="#Reflection">&#182;</a></h2><h4 id="Shortcomings">Shortcomings<a class="anchor-link" href="#Shortcomings">&#182;</a></h4><p>There are some shortcomings in my analysis.</p>
 <ul>
-<li>dataset: the dataset contains a lot more rows for non-rain than for rain. It would be ideal to have equal number of rows for both cases.</li>
+<li>dataset: the dataset contains only data from 1 month (May 2011), this is quite a short period. It might be a month with a lot of rain that is not representable or it could be a time when there are a lot of people on vacation.
+The dataset also contains some columns that seem to be closely related to each other. For example, the daily average of the pressure (meanpressurei) and the  pressure at the time/location itself (pressurei), this also counts for temperature. When using a lineair regression model with these columns as predictors, it might not give valid results for individual predictors, this problem is called multicollinearity.</li>
 <li>regression model: the chosen regression model OLS (ordinary least squares) is quite simplistic and has some drawbacks. It is sensitive for outliers and as seen in the figure of entries per hour, there are some outliers. Next to this, OLS performs bad when features are put into the model, that have a dependence between them. </li>
 </ul>
 
