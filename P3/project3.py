@@ -12,6 +12,7 @@ filename='data/utrecht_netherlands.osm'
 filenameS='data/utrecht-map-small.osm'
 filenameS_out='data/utrecht-map-small-cleaned.osm'
 filename_out='data/utrecht-temp.json'
+SAMPLE_FILE = "data/utrecht-sample.osm"
 expected_street_types = ["straat", "laan", "plein", "dreef", "singel", "weg", "baan", "steeg", "dijk", "veld", "hof", "werf", "poort", "markt","gracht","weide",
                          "plantsoen", "pad", "kade", "polder", "veer", "dam", "park", "berg", "spoor", "hoeve", "kamp", "kwartier", "weerd", "vaart","vlinder"]
                          
@@ -260,10 +261,36 @@ def cleanAndConvertToJson(file_in, pretty = False):
                         fo.write(json.dumps(formatted_element) + "\n")
             root.clear() #clear needed because otherwise the element remains in memory!
         del context
+
+
+# Create sample
+def get_element(osm_file, tags=('node', 'way', 'relation')):
+    """Yield element if it is the right type of tag
+    Reference:
+    http://stackoverflow.com/questions/3095434/inserting-newlines-in-xml-file-generated-via-xml-etree-elementtree-in-python
+    """
+    context = ET.iterparse(osm_file, events=('start', 'end'))
+    _, root = next(context)
+    for event, elem in context:
+        if event == 'end' and elem.tag in tags:
+            yield elem
+            root.clear()
+
+# Create sample from original file
+def createSample():
+    with open(SAMPLE_FILE, 'wb') as output:
+        output.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        output.write('<osm>\n  ')
+
+        # Write every 10th top level element
+        for i, element in enumerate(get_element(filename)):
+            if i % 800 == 0:
+                output.write(ET.tostring(element, encoding='utf-8'))                
+        output.write('</osm>')
     
 #auditMapData(filename)
 #cleanMapData(filenameS)
 #convertToJson(filename)
-cleanAndConvertToJson(filenameS)
-#do queries with pymongo
+#cleanAndConvertToJson(filenameS)
+createSample()
 
