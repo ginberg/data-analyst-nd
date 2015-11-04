@@ -87,6 +87,9 @@ predictions = intercept + np.dot(features, params)
 #print "r-squared:", compute_r_squared(values, predictions)
 
 plt.figure()
+plt.title('Residual plot')
+plt.xlabel('ENTRIESn_hourly - predictions ')
+plt.ylabel('Frequency')
 (turnstile_weather['ENTRIESn_hourly'] - predictions).hist(bins=100)
 
 
