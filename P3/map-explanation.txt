@@ -1,0 +1,16 @@
+Map explanation
+
+https://mapzen.com/data/metro-extracts
+Utrecht, the Netherlands because I live there.
+
+
+"utrecht_netherlands": {
++                    "bbox": {
++                        "top": "52.184",
++                        "left": "4.933",
++                        "bottom": "52.001",
++                        "right": "5.303"
++                    }
++                },
+
+https://www.openstreetmap.org/export#map=12/52.0927/5.1177
