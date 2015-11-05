@@ -14,3 +14,8 @@ Utrecht, the Netherlands because I live there.
 +                },
 
 https://www.openstreetmap.org/export#map=12/52.0927/5.1177
+
+http://api.openstreetmap.org/api/0.6/map?bbox=4.933,52.001,5.303,52.184
+http://overpass.osm.rambler.ru/cgi/xapi_meta?*[bbox=4.933,52.001,5.303,52.184]
+
+left, bottom, right, top (min long, min lat, max long, max lat)

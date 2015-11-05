@@ -7,22 +7,24 @@ import re
 import codecs
 import json
 from collections import defaultdict
+import matplotlib.pyplot as plt
 
-filename='data/utrecht_netherlands.osm'
-filenameS='data/utrecht-map-small.osm'
-filenameS_out='data/utrecht-map-small-cleaned.osm'
-filename_out='data/utrecht-temp.json'
+FILENAME='data/utrecht_netherlands.osm'
+FILENAME_OUT='data/utrecht.json'
 SAMPLE_FILE = "data/utrecht-sample.osm"
-expected_street_types = ["straat", "laan", "plein", "dreef", "singel", "weg", "baan", "steeg", "dijk", "veld", "hof", "werf", "poort", "markt","gracht","weide",
+
+EXPECTED_STREET_NAMES = ["straat", "laan", "plein", "dreef", "singel", "weg", "baan", "steeg", "dijk", "veld", "hof", "werf", "poort", "markt","gracht","weide",
                          "plantsoen", "pad", "kade", "polder", "veer", "dam", "park", "berg", "spoor", "hoeve", "kamp", "kwartier", "weerd", "vaart","vlinder"]
                          
-abbreviations = ["W.Z", "O.Z."]
+STREET_NAME_ABBREVIATIONS = ["W.Z", "O.Z."]
+DUTCH_POSTAL_CODE_REGEX = "^[0-9]{4}\s*[a-zA-Z]{2}$"
 
 """Audit data the osm file."""
 def auditMapData(filename):
     tags = {}
     street_types = []
-    postal_codes = []
+    wrong_postal_codes = []
+    unexpected_postal_codes = []
     context = ET.iterparse(filename, events=('start','end'))
     context = iter(context)
     event, root = context.next()
@@ -38,27 +40,34 @@ def auditMapData(filename):
                     if is_street_name(tag):
                         audit_street_type(street_types, tag.attrib['v'])
                     elif is_postal_code(tag):
-                        audit_postal_code(postal_codes, tag.attrib['v'])        
+                        audit_postal_code_format(wrong_postal_codes, tag.attrib['v'])        
+                        audit_postal_code_region(unexpected_postal_codes, tag.attrib['v']) 
         root.clear() #clear needed because otherwise the element remains in memory!
     del context
     #for elem in tree.iter():
     print "Number of main tags:"
     pprint.pprint(tags)              
     print "Unexpected street types:", set(street_types)
-    print "Unexpected postal codes:", set(postal_codes)
+    print "Wrong postal codes:", set(wrong_postal_codes)
+    print "Unexpected postal codes:", set(unexpected_postal_codes)
     return tags 
  
 def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
     
 def is_postal_code(elem):
-    return (elem.attrib['k'] == "postal_code")
+    return (elem.attrib['k'] == "addr:postcode")
     
 def audit_street_type(street_types, street_name):
-    if not street_name.endswith(tuple(expected_street_types)):
+    if not street_name.endswith(tuple(EXPECTED_STREET_NAMES)):
         street_types.append(street_name)
 
-def audit_postal_code(postal_codes, postal_code):
+def audit_postal_code_format(postal_codes, postal_code):
+    pattern = re.compile(DUTCH_POSTAL_CODE_REGEX)
+    if not pattern.match(postal_code):
+        postal_codes.append(postal_code)
+        
+def audit_postal_code_region(postal_codes, postal_code):
     if not postal_code.startswith("35"):
         postal_codes.append(postal_code)
         
@@ -211,7 +220,9 @@ def format_element(element):
                 elif getAttribute(tagElem,"k") == "addr:city":
                     address["city"] = getAttribute(tagElem, "v")
                 elif getAttribute(tagElem,"k") == "amenity":
-                    node["amenity"] = getAttribute(tagElem, "v")                    
+                    node["amenity"] = getAttribute(tagElem, "v")
+                elif getAttribute(tagElem,"k") == "cuisine":
+                    node["cuisine"] = getAttribute(tagElem, "v")                     
         if bool(address):       
             node["address"] = address
         return node
@@ -239,7 +250,7 @@ def convertToJson(file_in, pretty = False):
         del context
         
 def cleanAndConvertToJson(file_in, pretty = False):
-    file_out = filename_out.format(file_in)
+    file_out = FILENAME_OUT.format(file_in)
     with codecs.open(file_out, "w") as fo:
         context = ET.iterparse(file_in,events=('start','end'))
         context = iter(context)
@@ -287,10 +298,37 @@ def createSample():
             if i % 800 == 0:
                 output.write(ET.tostring(element, encoding='utf-8'))                
         output.write('</osm>')
+
+def plotTopCuisine():
+    cuisinesMap = {}
+    cuisinesLabels =[]
+    from pymongo import MongoClient
+    import numpy as np
+    client = MongoClient('localhost:27017')
+    db = client.test
+    top_cuisine = db.utrecht.aggregate([{"$match":{"cuisine":{"$exists":1}}}, {"$group":{"_id":"$cuisine",
+                           "count":{"$sum":1}}}, {"$sort":{"count":-1}}, {"$limit":10}])
+    i = 0
+    for cuisine in top_cuisine:
+        cuisinesMap[i] = cuisine["count"]
+        cuisinesLabels.append(cuisine["_id"])
+        i = i + 1
+
+    pos = np.arange(len(cuisinesMap.keys()))
+    width = 1.0     # gives histogram aspect to the bar diagram
+    ax = plt.axes()
+    ax.set_xticks(pos + (width / 2))
+    ax.set_xticklabels(cuisinesLabels)
+    plt.bar(cuisinesMap.keys(), cuisinesMap.values(), width, color='blue')
+    plt.xlabel('Cuisine')
+    plt.ylabel('Frequency')
+    plt.title('Top 10 cuisines in Utrecht')
+    plt.show()
     
-#auditMapData(filename)
+#auditMapData(SAMPLE_FILE)
+#auditMapData(FILENAME)
 #cleanMapData(filenameS)
 #convertToJson(filename)
-#cleanAndConvertToJson(filenameS)
-createSample()
-
+#scleanAndConvertToJson(FILENAME)
+#createSample()
+plotTopCuisine()
