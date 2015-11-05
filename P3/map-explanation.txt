@@ -1,9 +1,10 @@
 Map explanation
 
+I have chose the city of Utrecht in the Netherlands because I live there.
+The data was not yet on mapzen metro-extracts, but I did a request and they added it, so now it is available. Please see
 https://mapzen.com/data/metro-extracts
-Utrecht, the Netherlands because I live there.
 
-
+The exact coordinates that are used are below
 "utrecht_netherlands": {
 +                    "bbox": {
 +                        "top": "52.184",
@@ -13,9 +14,9 @@ Utrecht, the Netherlands because I live there.
 +                    }
 +                },
 
+Overview of data
+
+This link provides an overview of the area on openstreetmap
 https://www.openstreetmap.org/export#map=12/52.0927/5.1177
 
-http://api.openstreetmap.org/api/0.6/map?bbox=4.933,52.001,5.303,52.184
-http://overpass.osm.rambler.ru/cgi/xapi_meta?*[bbox=4.933,52.001,5.303,52.184]
 
-left, bottom, right, top (min long, min lat, max long, max lat)
