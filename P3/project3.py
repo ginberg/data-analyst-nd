@@ -39,12 +39,9 @@ def auditMapData(filename):
                 for tag in element.iter("tag"):
                     if is_street_name(tag):
                         audit_street_type(street_types, tag.attrib['v'])
-                    #elif is_postal_code(tag):
-                     #   audit_postal_code_format(wrong_postal_codes, tag.attrib['v'])        
-                      #  audit_postal_code_region(unexpected_postal_codes, tag.attrib['v']) 
-                    elif is_cuisine(tag):
-                        if tag.attrib['v'] == "":
-                            print "empty cuisine!"
+                    elif is_postal_code(tag):
+                        audit_postal_code_format(wrong_postal_codes, tag.attrib['v'])        
+                        audit_postal_code_region(unexpected_postal_codes, tag.attrib['v']) 
         root.clear()
     del context
     
@@ -60,9 +57,6 @@ def is_street_name(elem):
     
 def is_postal_code(elem):
     return (elem.attrib['k'] == "addr:postcode")
-    
-def is_cuisine(elem):
-    return (elem.attrib['k'] == "cuisine")
 
 def audit_street_type(street_types, street_name):
     if not street_name.endswith(tuple(EXPECTED_STREET_NAMES)):
@@ -312,8 +306,11 @@ def plotTopCuisine():
     import numpy as np
     client = MongoClient('localhost:27017')
     db = client.test
-    top_cuisine = db.utrecht.aggregate([{"$match":{"cuisine":{"$exists":1}}}, {"$group":{"_id":"$cuisine",
-                           "count":{"$sum":1}}}, {"$sort":{"count":-1}}, {"$limit":10}])
+    pipeline = [{"$match":{"cuisine":{"$exists":1}}}, 
+                {"$group":{"_id":"$cuisine", "count":{"$sum":1}}}, 
+                {"$sort":{"count":-1}}, 
+                {"$limit":10}]
+    top_cuisine = db.utrecht.aggregate(pipeline)
     i = 0
     for cuisine in top_cuisine:
         cuisinesMap[i] = cuisine["count"]
@@ -321,7 +318,7 @@ def plotTopCuisine():
         i = i + 1
 
     pos = np.arange(len(cuisinesMap.keys()))
-    width = 1.0     # gives histogram aspect to the bar diagram
+    width = 1.0
     ax = plt.axes()
     ax.set_xticks(pos + (width / 2))
     ax.set_xticklabels(cuisinesLabels)
@@ -331,10 +328,10 @@ def plotTopCuisine():
     plt.title('Top 10 cuisines in Utrecht')
     plt.show()
     
-auditMapData(FILENAME)
+auditMapData(SAMPLE_FILE)
 #auditMapData(FILENAME)
-#cleanMapData(filenameS)
-#convertToJson(filename)
+#cleanMapData(SAMPLE_FILE)
+#convertToJson(SAMPLE_FILE)
 #scleanAndConvertToJson(FILENAME)
 #createSample()
 #plotTopCuisine()

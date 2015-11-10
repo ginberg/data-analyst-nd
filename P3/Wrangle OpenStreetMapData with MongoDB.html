@@ -190,17 +190,17 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s">&quot;mongodb://localhost:27017&quot;</span><span class="p">)</span>
 <span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">test</span>
-<span class="n">top_pc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">([</span>
-        <span class="p">{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;address.postcode&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$address.postcode&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
-        <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;address.postcode&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+            <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$address.postcode&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+            <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
+            <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<span class="n">top_pc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">top_pc</span><span class="p">:</span>
     <span class="k">print</span> <span class="n">pc</span>
 </pre></div>
@@ -228,14 +228,14 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">top_cities</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">([</span>
-        <span class="p">{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;address.city&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$address.city&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
-        <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">pipeline</span> <span class="o">=</span> <span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;address.city&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$address.city&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
+             <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<span class="n">top_cities</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">top_cities</span><span class="p">:</span>
     <span class="k">print</span> <span class="n">city</span>
 </pre></div>
@@ -274,10 +274,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">totalRecords</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">totalRecords</span>
 </pre></div>
 
 </div>
@@ -288,13 +289,11 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>7120051</pre>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>7120051
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -313,7 +312,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;node&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
@@ -327,7 +326,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[15]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[41]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -355,7 +354,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;way&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
@@ -369,7 +368,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[42]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -394,7 +393,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s">&quot;created.user&quot;</span><span class="p">))</span> 
@@ -408,7 +407,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[43]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -426,23 +425,26 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Top users</p>
+<p>Top 3 users and their contribution percentage</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">top_users</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">([</span>
-        <span class="p">{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;created.user&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
-        <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">pipeline</span> <span class="o">=</span> <span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;created.user&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
+             <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<span class="n">top_users</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+<span class="n">topUserCount</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">top_users</span><span class="p">:</span>
     <span class="k">print</span> <span class="n">user</span>
+    <span class="n">topUserCount</span> <span class="o">=</span> <span class="n">topUserCount</span> <span class="o">+</span> <span class="n">user</span><span class="p">[</span><span class="s">&quot;count&quot;</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;Contribution percentage:&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">topUserCount</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">totalRecords</span><span class="p">),</span> <span class="s">&quot;%&quot;</span>
 </pre></div>
 
 </div>
@@ -458,6 +460,7 @@ div#notebook {
 <pre>{u&apos;count&apos;: 1440411, u&apos;_id&apos;: u&apos;Gertjan Idema_BAG&apos;}
 {u&apos;count&apos;: 939629, u&apos;_id&apos;: u&apos;PeeWee32_BAG&apos;}
 {u&apos;count&apos;: 932991, u&apos;_id&apos;: u&apos;3dShapes&apos;}
+Contribution percentage: 46 %
 </pre>
 </div>
 </div>
@@ -478,14 +481,14 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">top_amenities</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">([</span>
-        <span class="p">{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;amenity&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
-        <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
-        <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">pipeline</span> <span class="o">=</span> <span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;amenity&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
+             <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">3</span> <span class="p">}])</span>
+<span class="n">top_amenities</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">amenity</span> <span class="ow">in</span> <span class="n">top_amenities</span><span class="p">:</span>
     <span class="k">print</span> <span class="n">amenity</span>
 </pre></div>
@@ -516,7 +519,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Other-ideas-about-the-datasets">Other ideas about the datasets<a class="anchor-link" href="#Other-ideas-about-the-datasets">&#182;</a></h3><p>I am interested in the top 10 cuisines in Utrecht. The dataset provides a tag type "cuisine" that can be used
+<p>Top cuisines</p>
+<p>I am interested in the top 10 cuisines in Utrecht. The dataset provides a tag type "cuisine" that can be used
 for that purpose. After retrieving the information from Mongo, it is plotted with pyplot.</p>
 
 </div>
@@ -524,11 +528,14 @@ for that purpose. After retrieving the information from Mongo, it is plotted wit
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">top_cuisine</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;cuisine&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$cuisine&quot;</span><span class="p">,</span>
-                           <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span> <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}])</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">pipeline</span> <span class="o">=</span> <span class="p">([{</span><span class="s">&quot;$match&quot;</span><span class="p">:{</span><span class="s">&quot;cuisine&quot;</span><span class="p">:{</span><span class="s">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$group&quot;</span><span class="p">:{</span><span class="s">&quot;_id&quot;</span><span class="p">:</span><span class="s">&quot;$cuisine&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">:{</span><span class="s">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}},</span> 
+             <span class="p">{</span><span class="s">&quot;$sort&quot;</span><span class="p">:{</span><span class="s">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},</span> 
+             <span class="p">{</span><span class="s">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}])</span>
+<span class="n">top_cuisine</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">utrecht</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">cuisine</span> <span class="ow">in</span> <span class="n">top_cuisine</span><span class="p">:</span>
     <span class="k">print</span> <span class="n">cuisine</span>
 </pre></div>
@@ -567,6 +574,26 @@ for that purpose. After retrieving the information from Mongo, it is plotted wit
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="plots/utrecht_top_10_cuisines.jpg" alt="Top 10 cuisines in Utrecht"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Other-ideas-about-the-datasets">Other ideas about the datasets<a class="anchor-link" href="#Other-ideas-about-the-datasets">&#182;</a></h3><p>Encourage user participation through gamification</p>
+<p>When viewing the top users of Utrecht data, I noticed the following</p>
+<ul>
+<li>The top 2 users both have the word "BAG" in their name</li>
+<li>Combined top 3 users contribution is 46 %</li>
+<li>Total number os users is 838</li>
+<li>User data is not emphasized on the OpenStreetmapdata website.</li>
+</ul>
+<p>The word "BAG" refers to "Basisregistraties Adressen en Gebouwen" which is Dutch for Basic registrations for addresses and buildings. It contains all official data of addresses and buildings in the Netherlands and it is maintained by all municipalities and [Kadaster] (<a href="http://www.kadaster.nl/web/Themas/Registraties/BAG-1.htm">http://www.kadaster.nl/web/Themas/Registraties/BAG-1.htm</a>). So, the top 2 users are probably working for Kadaster. The top 3 users contribution percentage is quite high, so that means the quality of the datasets depend on a small group of people. It would be better to have a more spread out distribution. 
+To accomplish this, gamification could be used. One can think of a leaderboard of top users for a certain region. 
+When a user adds data to a region, he will get points related to the amount and quality of data. An indication of the quality of data could be obtained to run the uploaded data against a basic validation template.</p>
 
 </div>
 </div>
