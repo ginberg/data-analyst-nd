@@ -39,12 +39,15 @@ def auditMapData(filename):
                 for tag in element.iter("tag"):
                     if is_street_name(tag):
                         audit_street_type(street_types, tag.attrib['v'])
-                    elif is_postal_code(tag):
-                        audit_postal_code_format(wrong_postal_codes, tag.attrib['v'])        
-                        audit_postal_code_region(unexpected_postal_codes, tag.attrib['v']) 
-        root.clear() #clear needed because otherwise the element remains in memory!
+                    #elif is_postal_code(tag):
+                     #   audit_postal_code_format(wrong_postal_codes, tag.attrib['v'])        
+                      #  audit_postal_code_region(unexpected_postal_codes, tag.attrib['v']) 
+                    elif is_cuisine(tag):
+                        if tag.attrib['v'] == "":
+                            print "empty cuisine!"
+        root.clear()
     del context
-    #for elem in tree.iter():
+    
     print "Number of main tags:"
     pprint.pprint(tags)              
     print "Unexpected street types:", set(street_types)
@@ -58,6 +61,9 @@ def is_street_name(elem):
 def is_postal_code(elem):
     return (elem.attrib['k'] == "addr:postcode")
     
+def is_cuisine(elem):
+    return (elem.attrib['k'] == "cuisine")
+
 def audit_street_type(street_types, street_name):
     if not street_name.endswith(tuple(EXPECTED_STREET_NAMES)):
         street_types.append(street_name)
@@ -82,7 +88,7 @@ def cleanMapData(filename):
                 for tag in element.iter("tag"):
                     if is_street_name(tag):
                         clean_street_name(tag)
-        root.clear() #clear needed because otherwise the element remains in memory!
+        root.clear()
     del context
     print "Unexpected street types:", set(cleaned_streets)
 
@@ -246,7 +252,7 @@ def convertToJson(file_in, pretty = False):
                         fo.write(json.dumps(el, indent=2)+"\n")
                     else:
                         fo.write(json.dumps(el) + "\n")
-            root.clear() #clear needed because otherwise the element remains in memory!
+            root.clear()
         del context
         
 def cleanAndConvertToJson(file_in, pretty = False):
@@ -270,7 +276,7 @@ def cleanAndConvertToJson(file_in, pretty = False):
                         fo.write(json.dumps(formatted_element, indent=2)+"\n")
                     else:
                         fo.write(json.dumps(formatted_element) + "\n")
-            root.clear() #clear needed because otherwise the element remains in memory!
+            root.clear()
         del context
 
 
@@ -293,7 +299,7 @@ def createSample():
         output.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         output.write('<osm>\n  ')
 
-        # Write every 10th top level element
+        # Write every 800th top level element
         for i, element in enumerate(get_element(filename)):
             if i % 800 == 0:
                 output.write(ET.tostring(element, encoding='utf-8'))                
@@ -325,10 +331,10 @@ def plotTopCuisine():
     plt.title('Top 10 cuisines in Utrecht')
     plt.show()
     
-#auditMapData(SAMPLE_FILE)
+auditMapData(FILENAME)
 #auditMapData(FILENAME)
 #cleanMapData(filenameS)
 #convertToJson(filename)
 #scleanAndConvertToJson(FILENAME)
 #createSample()
-plotTopCuisine()
+#plotTopCuisine()

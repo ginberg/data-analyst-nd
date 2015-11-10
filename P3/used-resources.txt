@@ -2,3 +2,4 @@ Udacity forum
 Sample project
 http://wiki.openstreetmap.org/wiki/OSM_XML
 http://effbot.org/zone/element-iterparse.htm
+http://www.kadaster.nl/web/Themas/Registraties/BAG/BAGartikelen/Wat-is-de-BAG.htm
