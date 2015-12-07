@@ -10,15 +10,27 @@ Explore and Summarize Data by Ger Inberg
 # You should set echo=FALSE for all code chunks in your file.
 
 library(ggplot2)
+library(dplyr)
+library(gridExtra)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
-# Load the Data
-
+# Load the Data and print some basics
+redwine <-read.csv("data/wineQualityReds.csv", header=TRUE, sep = ",") 
+dim(redwine)
+summary(redwine)
+str(redwine)
 ```
 
 # Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
+
+#boxplots
+
+#histograms
+ggplot(data = redwine, aes(x = quality)) + geom_histogram() 
+
+ggplot(data = redwine, aes(x=quality)) + geom_bar(binwidth=1)
 
 ```
 
