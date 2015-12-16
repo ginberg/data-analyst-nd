@@ -9,7 +9,11 @@ Notes:
 ### Scatterplot Review
 
 ```{r Scatterplot Review}
-
+data(diamonds)
+ggplot(aes(x = carat, y = price), data = diamonds) + 
+  geom_point() +
+  xlim(quantile(diamonds$carat, c(0.01, 0.99))) +
+  ylim(quantile(diamonds$price, c(0.01, 0.99)))
 ```
 
 ***
@@ -67,6 +71,12 @@ Response:
 Notes:
 
 ```{r The Demand of Diamonds}
+library(gridExtra)
+
+plot1 <- ggplot(data = diamonds, aes(x=price)) + geom_histogram() + ggtitle('Price')
+plot2 <- ggplot(data = diamonds, aes(x=log10(price))) + geom_histogram() + ggtitle('Price (log10)')
+
+grid.arrange(plot1, plot2, ncol=2)
 
 ```
 
@@ -94,7 +104,7 @@ cuberoot_trans = function() trans_new('cuberoot', transform = function(x) x^(1/3
 #### Use the cuberoot_trans function
 ```{r Use cuberoot_trans}
 ggplot(aes(carat, price), data = diamonds) + 
-  geom_point() + 
+  geom_point(alpha=0.5, size = 0.75, position = 'jitter' ) + 
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
@@ -136,7 +146,7 @@ Alter the code below.
 install.packages('RColorBrewer')
 library(RColorBrewer)
 
-ggplot(aes(x = carat, y = price), data = diamonds) + 
+ggplot(aes(x = carat, y = price, colour = clarity), data = diamonds) + 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
   scale_color_brewer(type = 'div',
     guide = guide_legend(title = 'Clarity', reverse = T,
@@ -151,7 +161,7 @@ ggplot(aes(x = carat, y = price), data = diamonds) +
 ***
 
 ### Clarity and Price
-Response:
+Response: yes because for same carat, some clarities have always higher price!
 
 ***
 
@@ -159,7 +169,7 @@ Response:
 
 Alter the code below.
 ```{r Price vs. Carat and Cut}
-ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) + 
+ggplot(aes(x = carat, y = price, color = cut), data = diamonds) + 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
   scale_color_brewer(type = 'div',
                      guide = guide_legend(title = 'Clarity', reverse = T,
@@ -168,7 +178,7 @@ ggplot(aes(x = carat, y = price, color = clarity), data = diamonds) +
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
                      breaks = c(350, 1000, 5000, 10000, 15000)) +
-  ggtitle('Price (log10) by Cube-Root of Carat and Clarity')
+  ggtitle('Price (log10) by Cube-Root of Carat and Cut')
 ```
 
 ***
@@ -182,19 +192,17 @@ Response:
 
 Alter the code below.
 ```{r Price vs. Carat and Color}
-ggplot(aes(x = carat, y = price, color = cut), data = diamonds) + 
+ggplot(aes(x = carat, y = price, color = color), data = diamonds) + 
   geom_point(alpha = 0.5, size = 1, position = 'jitter') +
-  scale_color_brewer(type = 'div',
-                     guide = guide_legend(title = Cut, reverse = T,
-                                          override.aes = list(alpha = 1, size = 2))) +  
+  scale_color_brewer(type = 'div', guide = guide_legend(title = 'Colour', reverse= FALSE,
+                    override.aes = list(alpha = 1, size = 2))) +  
   scale_x_continuous(trans = cuberoot_trans(), limits = c(0.2, 3),
                      breaks = c(0.2, 0.5, 1, 2, 3)) + 
   scale_y_continuous(trans = log10_trans(), limits = c(350, 15000),
                      breaks = c(350, 1000, 5000, 10000, 15000)) +
-  ggtitle('Price (log10) by Cube-Root of Carat and Cut')
+  ggtitle('Price (log10) by Cube-Root of Carat and Color’)
 ```
 
-***
 
 ### Color and Price
 Response:
@@ -240,10 +248,11 @@ Response:
 Notes:
 
 ```{r A Bigger, Better Data Set}
-install.package('bitops')
+install.packages('bitops')
 install.packages('RCurl')
 library('bitops')
 library('RCurl')
+library('memisc')
 
 diamondsurl = getBinaryURL("https://raw.github.com/solomonm/diamonds-data/master/BigDiamonds.Rda")
 load(rawConnection(diamondsurl))
@@ -256,7 +265,14 @@ https://github.com/solomonm/diamonds-data
 Notes:
 
 ```{r Building a Model Using the Big Diamonds Data Set}
+diamondsBig <- read.csv('diamondsbig.csv')
 
+m1 <- lm(I(log(price)) ~ I(carat^(1/3)), data = diamondsBig)
+m2 <- update(m1, ~ . + carat)
+m3 <- update(m2, ~ . + cut)
+m4 <- update(m3, ~ . + color)
+m5 <- update(m4, ~ . + clarity)
+mtable(m1, m2, m3, m4, m5)
 ```
 
 

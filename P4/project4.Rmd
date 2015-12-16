@@ -1,4 +1,4 @@
-Explore and Summarize Data by Ger Inberg
+Quality of red wine exploration by Ger Inberg
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -25,20 +25,49 @@ str(redwine)
 # Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
 
-#boxplots
-
 #histograms
-ggplot(data = redwine, aes(x = quality)) + geom_histogram() 
 
+#fixed.acidity
+ggplot(data = redwine, aes(x=fixed.acidity)) + geom_histogram()
+#volatile.acidity
+ggplot(data = redwine, aes(x=volatile.acidity)) + geom_histogram()
+#citric.acid
+ggplot(data = redwine, aes(x=citric.acid)) + geom_histogram()
+#residual.sugar
+ggplot(data = redwine, aes(x=residual.sugar)) + geom_histogram()
+#chlorides
+ggplot(data = redwine, aes(x=chlorides)) + geom_histogram()
+#free.sulfur.dioxide
+ggplot(data = redwine, aes(x=free.sulfur.dioxide)) + geom_histogram()
+#total.sulfur.dioxide
+ggplot(data = redwine, aes(x=total.sulfur.dioxide)) + geom_histogram()
+#density
+ggplot(data = redwine, aes(x=density)) + geom_histogram()
+#pH
+ggplot(data = redwine, aes(x=pH)) + geom_histogram()
+#sulphates
+ggplot(data = redwine, aes(x=sulphates)) + geom_histogram()
+#alcohol
+ggplot(data = redwine, aes(x=alcohol)) + geom_histogram()
+
+#quality
 ggplot(data = redwine, aes(x=quality)) + geom_bar(binwidth=1)
-
 ```
 
 # Univariate Analysis
 
 ### What is the structure of your dataset?
 
+There are 1599 wines in the dataset with 13 features (X, fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol and quality). The variables X and quality are integers, while the others are numbers.
+
+Some other observations:
+X is the wine number.
+The density of wine is close to 1, so equals the density of water.
+The median quality for a redwine is 6 and the max is 8.
+
 ### What is/are the main feature(s) of interest in your dataset?
+
+The main feature in the data set is quality. I’d like to determine which features are best for predicting the quality of a red wine. I suspect a combination of the other variables can be used to build a predictive model to determine the quality.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
