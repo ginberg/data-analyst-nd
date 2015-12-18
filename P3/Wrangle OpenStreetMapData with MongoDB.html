@@ -177,6 +177,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Wrangle-OpenStreetMapData-of-Utrecht-with-MongoDB">Wrangle OpenStreetMapData of Utrecht with MongoDB<a class="anchor-link" href="#Wrangle-OpenStreetMapData-of-Utrecht-with-MongoDB">&#182;</a></h2><h3 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h3><p>Openstreepmap.org provides all kind of data about places in the world. For example, you might be interested in what is the most popular cuisine in your city. I have chosen to investigate on Utrecht, since I am living there at the moment. Before I could start with doing analyis, I first have to check the quality of the data provided.</p>
 <h3 id="Problems-Encountered-in-the-Map">Problems Encountered in the Map<a class="anchor-link" href="#Problems-Encountered-in-the-Map">&#182;</a></h3><p>After downloading the Utrecht map from mapzen.com, I have created a sample from it. First, I have run my audit script against the sample to inspect the data. I have some minor issues that I will discuss below, but overall the dataset is pretty clean already.</p>
 <ul>
 <li><p>Abbreviated street names. There are abbreviations in the last part of a streetname, for example "W.Z.". In other cases it is written fully like "Westzijde". This is also the case for "O.Z." and "Oostzijde". I have decided to transform the abbreviations to its full name.</p>
