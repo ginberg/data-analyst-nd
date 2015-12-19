@@ -23,6 +23,14 @@ whitewine$color = 'white'
 wine <- rbind(redwine, whitewine)
 wine$color = factor(wine$color)
 wine$total.acidity = wine$fixed.acidity + wine$volatile.acidity
+wine$alcohol_level <- cut(wine$alcohol, 
+ breaks = c(quantile(wine$alcohol, prob =   0), quantile(wine$alcohol, prob = .33), 
+            quantile(wine$alcohol, prob = .66), quantile(wine$alcohol, prob =   1)),
+ labels = c("Low", "Medium", "High"))
+wine$quality_level <- cut(wine$quality, 
+ breaks = c(quantile(wine$quality, prob =   0), quantile(wine$quality, prob = .33), 
+            quantile(wine$quality, prob = .66), quantile(wine$quality, prob =   1)),
+ labels = c("Low", "Medium", "High"))
 
 dim(wine)
 summary(wine)
@@ -73,7 +81,7 @@ sup(ggplot(data = wine, aes(x=quality)) + geom_bar(binwidth=1))
 
 ### What is the structure of your dataset?
 
-There are 1599 wines in the dataset with 14 features (fixed.acidity, volatile.acidity, total.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol, color and quality). The (output) variable quality is an integer, the color is a factor variable while the others are numbers.
+There are 1599 wines in the dataset with 13 features (fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol, color and quality). The (output) variable quality is an integer, the color is a factor variable while the others are numbers.
 
 Some other observations:
 The density of wine is close to 1, so equals the density of water.
@@ -90,7 +98,8 @@ I think all of the other features, except density, can have an impact on the qua
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I have created a variable total.acidity, which is the sum of fixed.acidity and volatile.acidity.
+I have created a variable total.acidity, which is the sum of fixed.acidity and volatile.acidity. 
+I have also created alcohol_level and quality_level variable to be able to use them as a factor in the plots.
 
 ### Of the features you investigated, were theres any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
@@ -131,60 +140,61 @@ ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point() + scale_y_continuo
 #color
 ggplot(data = wine, aes(x=color, y=quality)) + geom_boxplot() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
 
+#pH vs citric.acid
+ggplot(data = wine, aes(x=citric.acid, y=pH)) + geom_point() + xlim(0,0.75) + ylim(2.5, 3.75) + stat_smooth(method = "lm", col='red')
+
+#total.sulfur.dioxide vs free.sulfur.dioxide
+ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) + geom_point() +xlim(0,100) + ylim(0,250) + stat_smooth(method = "lm", col='red')
 ```
 
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
 
-
+I have made plots of the quality feature versus the other features. Most of the features don't seem to have a big impact on the quality because at most values of the input feature, most quality values are present. 
+For the features sulphates and chlorides there seems to be a negative trend, i.e. the quality decreases with a higer value for the input feature. Alcohol, on the other end, seems to have a positive trend.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
-
-
+I have looked at other relations between features and there seems to be a relationship between pH and citric.acid. When reading about acidity and ph levels, there is a logical explanation for this. The pH level of citric acid is 2.2 while wines mostly have a pH level between 2.9 and 3.9. So when more citric.acid, the pH level of the wine will drop.
 
 ### What was the strongest relationship you found?
 
-
-
+The strongst relationship that I found is between the total.sulfur.dioxide and free.sulfur.dioxide. This is explainable, because according to the documentation the total sulfur dioxide includes the amount of free forms of SO2 (=free.sulfur.dioxide).
 
 # Multivariate Plots Section
 
 ```{r echo=FALSE, Multivariate_Plots}
 #plots with 3 variables
 
-#fixed.acidity
-ggplot(data = wine, aes(x=fixed.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#volatile.acidity
-ggplot(data = wine, aes(x=volatile.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#total.acidity
-ggplot(data = wine, aes(x=total.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#citric.acid
-ggplot(data = wine, aes(x=citric.acid, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#residual.sugar
-ggplot(data = wine, aes(x=residual.sugar, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#chlorides
-ggplot(data = wine, aes(x=chlorides, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#free.sulfur.dioxide
-ggplot(data = wine, aes(x=free.sulfur.dioxide, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#total.sulfur.dioxide
-ggplot(data = wine, aes(x=total.sulfur.dioxide, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#density
-ggplot(data = wine, aes(x=density, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#pH
-ggplot(data = wine, aes(x=pH, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#sulphates
-ggplot(data = wine, aes(x=sulphates, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-#alcohol
-ggplot(data = wine, aes(x=alcohol, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#alcohol vs sulphates, color by quality_level
+ggplot(data = wine, aes(x=sulphates, y=alcohol, color=quality_level)) + geom_point() 
+
+#alcohol vs chlorides, color by quality_level
+ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_point() 
+
+#sulphates vs chlorides, color by quality_level
+ggplot(data = wine, aes(x=chlorides, y=sulphates, color=quality_level)) + geom_point() 
+
+#quality vs total.acidity, color by color 
+ggplot(data = wine, aes(x=total.acidity, y=quality, color=color)) + geom_point(alpha=1/5) + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+mean(wine[wine$color %in% 'red',]$total.acidity)
+mean(wine[wine$color %in% 'white',]$total.acidity)
+
+#total.sulfur.dioxide vs free.sulfur.dioxide, color by quality_level
+ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide, color=quality_level)) + geom_point() 
 ```
 
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
+When looking at the first 3 plots, it seems like alcohol, sulphates and chlorides strengthened each other. The blue dots that stand for high quality wines are more dominant in the upper left corner (first 2 plots) or lower left corner (3rd plot). 
+
+
 ### Were there any interesting or surprising interactions between features?
+
+When comparing differences between wine color, I found some interesting differences. The total acidity is for red wines quite higher than for white wines.
 
 ### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
 
@@ -207,19 +217,17 @@ I have plotted the density of the quality of wines in a histogram plot. The hist
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
-#chlorides
-#model <- lm(quality ~ chlorides + color, data = wine)
-ggplot(data = wine, aes(x=chlorides, y=quality, color=color)) + geom_point(alpha=1/1) + 
-  stat_smooth(method = "lm", col='yellow')  + 
-  scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) + scale_x_continuous(breaks = seq(0, 0.20, 0.05), limits=c(0,0.2)) +
-  xlab('chlorides (g / dm^3)') + ylab('quality')
-mean(redwine$chlorides)
-mean(whitewine$chlorides)
+#alcohol vs chlorides, color by quality_level
+ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_point() + 
+  scale_x_continuous(breaks = seq(0,0.2,0.05), limits=c(0,0.2)) + 
+  scale_y_continuous(breaks = seq(8,14,2), limits=c(8,14)) + 
+  xlab('chlorides (g / dm^3)') + ylab('alcohol (% per volume)')
+
 ```
 
 ### Description Two
 
-I have plotted the quality of wines vs the chlorides, for both colors. The red wines contain more chlorides on average than the white wines, in fact almost twice as much if we calculate the mean values. The lineair model line is decreasing, so the trend is that when increasing the chlorides, the quality drops.
+I have plotted the alcohol of wines vs the chlorides and coloured it by the quality_level. The highest quality wines (with color blue) are mostly located at the upper left corner of the plot. This means that a high alcohol percentage and a low chlorides value are indicators for a high quality wine.
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
@@ -241,5 +249,3 @@ I have plotted the quality of wine vs the alcohol percentage and facetted this b
 
 The (combined) wine data set contains information on almost 6500 wines. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor in the quality of wine. In the boxplot of wine quality vs color, it can be seen that the quantiles are equal so color is not a major factor.
 In the final plots, I have tried to visualize some interesting insights from the data. The quality histogram (plot1) follows almost a normal distribution, so most wines in the dataset are close to the mean and median value.
-
-
