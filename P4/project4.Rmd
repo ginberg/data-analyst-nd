@@ -1,4 +1,4 @@
-Quality of red wine exploration by Ger Inberg
+Wine quality exploration by Ger Inberg
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -15,55 +15,70 @@ library(gridExtra)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
-# Load the Data and print some basics
+# Load the Data, combine the two datasets and print some basics
 redwine <-read.csv("data/wineQualityReds.csv", header=TRUE, sep = ",") 
-dim(redwine)
-summary(redwine)
-str(redwine)
+whitewine <-read.csv("data/wineQualityWhites.csv", header=TRUE, sep = ",") 
+redwine$color = 'red'
+whitewine$color = 'white'
+wine <- rbind(redwine, whitewine)
+wine$color = factor(wine$color)
+wine$total.acidity = wine$fixed.acidity + wine$volatile.acidity
+
+dim(wine)
+summary(wine)
+str(wine)
 ```
 
 # Univariate Plots Section
 ```{r echo=FALSE, Univariate_Plots}
 
-#histograms
+sup = function(plot){
+  suppressMessages(print(plot))  
+}
+
+#plot histograms
 
 #fixed.acidity
-ggplot(data = redwine, aes(x=fixed.acidity)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=fixed.acidity)) + geom_histogram())
 #volatile.acidity
-ggplot(data = redwine, aes(x=volatile.acidity)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=volatile.acidity)) + geom_histogram())
+#total.acidity
+sup(ggplot(data = wine, aes(x=total.acidity)) + geom_histogram())
 #citric.acid
-ggplot(data = redwine, aes(x=citric.acid)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=citric.acid)) + geom_histogram())
 #residual.sugar
-ggplot(data = redwine, aes(x=residual.sugar)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=residual.sugar)) + geom_histogram())
 #chlorides
-ggplot(data = redwine, aes(x=chlorides)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=chlorides)) + geom_histogram())
 #free.sulfur.dioxide
-ggplot(data = redwine, aes(x=free.sulfur.dioxide)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=free.sulfur.dioxide)) + geom_histogram())
 #total.sulfur.dioxide
-ggplot(data = redwine, aes(x=total.sulfur.dioxide)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=total.sulfur.dioxide)) + geom_histogram())
 #density
-ggplot(data = redwine, aes(x=density)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=density)) + geom_histogram())
 #pH
-ggplot(data = redwine, aes(x=pH)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=pH)) + geom_histogram())
 #sulphates
-ggplot(data = redwine, aes(x=sulphates)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=sulphates)) + geom_histogram())
 #alcohol
-ggplot(data = redwine, aes(x=alcohol)) + geom_histogram()
+sup(ggplot(data = wine, aes(x=alcohol)) + geom_histogram())
+#color
+sup(ggplot(data = wine, aes(x=color)) + geom_histogram())
 
 #quality
-ggplot(data = redwine, aes(x=quality)) + geom_bar(binwidth=1)
+sup(ggplot(data = wine, aes(x=quality)) + geom_bar(binwidth=1))
 ```
 
 # Univariate Analysis
 
 ### What is the structure of your dataset?
 
-There are 1599 wines in the dataset with 13 features (X, fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol and quality). The variables X and quality are integers, while the others are numbers.
+There are 1599 wines in the dataset with 14 features (fixed.acidity, volatile.acidity, total.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol, color and quality). The (output) variable quality is an integer, the color is a factor variable while the others are numbers.
 
 Some other observations:
-X is the wine number.
 The density of wine is close to 1, so equals the density of water.
 The median quality for a redwine is 6 and the max is 8.
+There are a lot more observations for white wine compared to red wine.
 
 ### What is/are the main feature(s) of interest in your dataset?
 
@@ -71,14 +86,50 @@ The main feature in the data set is quality. I’d like to determine which featu
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
 
+I think all of the other features, except density, can have an impact on the quality of the wine. Acidity and Alcohol could be major factors, because too much or less of these can make the wine unbalanced. 
+
 ### Did you create any new variables from existing variables in the dataset?
 
-### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+I have created a variable total.acidity, which is the sum of fixed.acidity and volatile.acidity.
 
+### Of the features you investigated, were theres any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
+Most features that I plotted have a 'normalish' distribution, i.e. they have a pattern that looks like a normal distribution. This means that most of the values are of that feature are close to the mean and median count.
+The plot of the residual.sugar however is different: it starts at a value of zero with the highest count and after that it only decreases. It looks like the right side of a normal distribution. 
 
 # Bivariate Plots Section
 ```{r echo=FALSE, Bivariate_Plots}
+
+#scatterplots for 2 variables
+wineQualityLow <- range(wine$quality)[1]
+wineQualityHigh <- range(wine$quality)[2]
+
+#fixed.acidity
+ggplot(data = wine, aes(x=fixed.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#volatile.acidity
+ggplot(data = wine, aes(x=volatile.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#total.acidity
+ggplot(data = wine, aes(x=total.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#citric.acid
+ggplot(data = wine, aes(x=citric.acid, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#residual.sugar
+ggplot(data = wine, aes(x=residual.sugar, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#chlorides
+ggplot(data = wine, aes(x=chlorides, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#free.sulfur.dioxide
+ggplot(data = wine, aes(x=free.sulfur.dioxide, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#total.sulfur.dioxide
+ggplot(data = wine, aes(x=total.sulfur.dioxide, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#density
+ggplot(data = wine, aes(x=density, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#pH
+ggplot(data = wine, aes(x=pH, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#sulphates
+ggplot(data = wine, aes(x=sulphates, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#alcohol
+ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#color
+ggplot(data = wine, aes(x=color, y=quality)) + geom_boxplot() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
 
 ```
 
@@ -86,7 +137,12 @@ The main feature in the data set is quality. I’d like to determine which featu
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
 
+
+
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+
+
 
 ### What was the strongest relationship you found?
 
@@ -96,7 +152,32 @@ The main feature in the data set is quality. I’d like to determine which featu
 # Multivariate Plots Section
 
 ```{r echo=FALSE, Multivariate_Plots}
+#plots with 3 variables
 
+#fixed.acidity
+ggplot(data = wine, aes(x=fixed.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#volatile.acidity
+ggplot(data = wine, aes(x=volatile.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#total.acidity
+ggplot(data = wine, aes(x=total.acidity, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#citric.acid
+ggplot(data = wine, aes(x=citric.acid, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#residual.sugar
+ggplot(data = wine, aes(x=residual.sugar, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#chlorides
+ggplot(data = wine, aes(x=chlorides, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#free.sulfur.dioxide
+ggplot(data = wine, aes(x=free.sulfur.dioxide, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#total.sulfur.dioxide
+ggplot(data = wine, aes(x=total.sulfur.dioxide, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#density
+ggplot(data = wine, aes(x=density, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#pH
+ggplot(data = wine, aes(x=pH, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#sulphates
+ggplot(data = wine, aes(x=sulphates, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+#alcohol
+ggplot(data = wine, aes(x=alcohol, y=quality, color=color)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
 ```
 
 # Multivariate Analysis
@@ -113,15 +194,25 @@ The main feature in the data set is quality. I’d like to determine which featu
 
 ### Plot One
 ```{r echo=FALSE, Plot_One}
-
+#price
+ggplot(data = wine) + geom_histogram(aes(x=quality, y=..density..), binwidth=1, colour="black", fill="white") + 
+  stat_function(fun = dnorm, args = list(mean = mean(wine$quality), sd = sd(wine$quality)), lwd = 2, col = 'red') +
+  scale_x_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1), limits=c(3, 9)) +
+  xlab('Quality') + ylab('Wine density')
 ```
 
 ### Description One
 
+I have plotted the density of the quality of wines in a histogram plot. The histogram is overlapped with a normal distribution, that uses the mean and standard deviation from the quality variable. As can be seen, the histogram 'follows' the normal distribution quite well, it is a bit more shifted to the right.
 
 ### Plot Two
 ```{r echo=FALSE, Plot_Two}
-
+#chlorides
+#model <- lm(quality ~ chlorides + color, data = wine)
+ggplot(data = wine, aes(x=chlorides, y=quality, color=color)) + geom_point(alpha=1/1) + 
+  stat_smooth(method = "lm", col='yellow')  + 
+  scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) + scale_x_continuous(breaks = seq(0, 0.20, 0.05), limits=c(0,0.2)) +
+  xlab('chlorides (g / dm^3)') + ylab('quality')
 ```
 
 ### Description Two
@@ -129,11 +220,19 @@ The main feature in the data set is quality. I’d like to determine which featu
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
-
+#alcohol
+model <- lm(quality ~ alcohol, data = wine)
+ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=1/2) + 
+  stat_smooth(method = "lm", col='red') +
+  scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) +   scale_x_continuous(breaks = seq(8, 14, 1), limits=c(8,14)) +
+  xlab('alcohol (% by volume)') + ylab('quality') +
+  facet_wrap( ~ color) 
 ```
 
 ### Description Three
 
-------
+I have plotted the quality of wine vs the alcohol percentage and facetted this by the wine color. Also, added a line representing the lineair model. As can be seen, the plots for red and white wine look quite similair. There seems to be a positive correlation between alcohol and quality, independent of the color.
 
 # Reflection
+
+The (combined) wine data set contains information on almost 6500 wines. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor in the quality of wine.
