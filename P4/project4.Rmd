@@ -14,7 +14,7 @@ library(dplyr)
 library(gridExtra)
 ```
 
-```{r echo=FALSE, Load_the_Data}
+```{r Load_the_Data}
 # Load the Data, combine the two datasets and print some basics
 redwine <-read.csv("data/wineQualityReds.csv", header=TRUE, sep = ",") 
 whitewine <-read.csv("data/wineQualityWhites.csv", header=TRUE, sep = ",") 
@@ -208,7 +208,8 @@ When comparing differences between wine color, I found some interesting differen
 ggplot(data = wine) + geom_histogram(aes(x=quality, y=..density..), binwidth=1, colour="black", fill="white") + 
   stat_function(fun = dnorm, args = list(mean = mean(wine$quality), sd = sd(wine$quality)), lwd = 2, col = 'red') +
   scale_x_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1), limits=c(3, 9)) +
-  xlab('Quality') + ylab('Wine density')
+  xlab('Quality') + ylab('Wine density') +
+  ggtitle("Wine quality density and normal distribution")
 ```
 
 ### Description One
@@ -221,8 +222,8 @@ I have plotted the density of the quality of wines in a histogram plot. The hist
 ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_point() + 
   scale_x_continuous(breaks = seq(0,0.2,0.05), limits=c(0,0.2)) + 
   scale_y_continuous(breaks = seq(8,14,2), limits=c(8,14)) + 
-  xlab('chlorides (g / dm^3)') + ylab('alcohol (% per volume)')
-
+  xlab('chlorides (g / dm^3)') + ylab('alcohol (% per volume)') +
+  ggtitle("Alcohol % vs chlorides colored by quality_level")
 ```
 
 ### Description Two
@@ -236,7 +237,8 @@ ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=1/2) +
   stat_smooth(method = "lm", col='red') +
   scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) +   scale_x_continuous(breaks = seq(8, 14, 1), limits=c(8,14)) +
   xlab('alcohol (% by volume)') + ylab('quality') +
-  facet_wrap( ~ color) 
+  facet_wrap( ~ color) +
+  ggtitle("Quality vs alcohol faceted by wine color")
 lm(quality ~ alcohol, data = redwine)
 lm(quality ~ alcohol, data = whitewine)
 ```
