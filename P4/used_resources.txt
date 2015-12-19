@@ -1,3 +1,5 @@
+Udacity forum
+https://s3.amazonaws.com/udacity-hosted-downloads/ud651/diamondsExample.html
+http://www.r-bloggers.com/
 http://www.cave-cleebourg.com/en/wine-analysing/
 https://en.wikipedia.org/wiki/Acids_in_wine
-
