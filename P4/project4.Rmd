@@ -139,7 +139,7 @@ I think all of the other features, except density, can have an impact on the qua
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I have created alcohol_level and quality_level variables to be able to use them as a factor in the plots.
+I have created alcohol_level and quality_level variables to be able to use them as a factor in the plots. Both have "low", "medium" and "high" levels.
 
 ### Of the features you investigated, were theres any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
@@ -179,8 +179,8 @@ ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) +
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
 
-I have made plots of the quality feature versus the other features. Most of the features don't seem to have a big impact on the quality because at most values of the input feature, most quality values are present. 
-For the features sulphates and chlorides there seems to be a negative trend, i.e. the quality decreases with a higer value for the input feature. Alcohol, on the other end, seems to have a positive trend.
+I have made plots of features that did show a stronger correlation in the ggcorr output.
+For the features alcohol and density there seems to be a negative trend, i.e. the alcohol % decreases with a higer density. Alcohol seems to have a positive effect on the quality.
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
@@ -229,7 +229,6 @@ printRegression(sulphates ~ chlorides)
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
 When looking at the first 3 plots, it seems like alcohol, sulphates and chlorides strengthened each other. The blue dots that stand for high quality wines are more dominant in the upper left corner (first 2 plots) or lower left corner (3rd plot). 
-
 
 ### Were there any interesting or surprising interactions between features?
 
