@@ -14,7 +14,7 @@ library(dplyr)
 library(gridExtra)
 ```
 
-```{r Load_the_Data}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Load_the_Data}
 # Load the Data, combine the two datasets and print some basics
 redwine <-read.csv("data/wineQualityReds.csv", header=TRUE, sep = ",") 
 whitewine <-read.csv("data/wineQualityWhites.csv", header=TRUE, sep = ",") 
@@ -24,13 +24,17 @@ wine <- rbind(redwine, whitewine)
 wine$color = factor(wine$color)
 wine$total.acidity = wine$fixed.acidity + wine$volatile.acidity
 wine$alcohol_level <- cut(wine$alcohol, 
- breaks = c(quantile(wine$alcohol, prob =   0), quantile(wine$alcohol, prob = .33), 
-            quantile(wine$alcohol, prob = .66), quantile(wine$alcohol, prob =   1)),
- labels = c("Low", "Medium", "High"))
+ breaks = c(quantile(wine$alcohol, prob =   0), 
+            quantile(wine$alcohol, prob = .33), 
+            quantile(wine$alcohol, prob = .66), 
+            quantile(wine$alcohol, prob =   1)),
+ labels = c("Low", "Medium", "High"), include.lowest=TRUE)
 wine$quality_level <- cut(wine$quality, 
- breaks = c(quantile(wine$quality, prob =   0), quantile(wine$quality, prob = .33), 
-            quantile(wine$quality, prob = .66), quantile(wine$quality, prob =   1)),
- labels = c("Low", "Medium", "High"))
+ breaks = c(quantile(wine$quality, prob =   0), 
+            quantile(wine$quality, prob = .33), 
+            quantile(wine$quality, prob = .66), 
+            quantile(wine$quality, prob =   1)),
+ labels = c("Low", "Medium", "High"),include.lowest=TRUE)
 
 dim(wine)
 summary(wine)
@@ -38,43 +42,112 @@ str(wine)
 ```
 
 # Univariate Plots Section
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Univariate_Plots}
 
+# function to suppress messages
 sup = function(plot){
   suppressMessages(print(plot))  
 }
 
-#plot histograms
+#plot histograms of every feature
 
 #fixed.acidity
-sup(ggplot(data = wine, aes(x=fixed.acidity)) + geom_histogram())
+ggplot(data = wine, aes(x=fixed.acidity)) + geom_histogram()
+summary(wine$fixed.acidity)
+print("Acids are an important component of wine and it constists of a fixed and 
+      volatile part. This feature represents the fixed part and can be tartaric 
+      acid for example. The mean and median are both about 7 g/dm^3. There are 
+      some outliers at the right side with a maximum of almost 16 g/dm^3.")
+
 #volatile.acidity
-sup(ggplot(data = wine, aes(x=volatile.acidity)) + geom_histogram())
+ggplot(data = wine, aes(x=volatile.acidity)) + geom_histogram()
+summary(wine$volatile.acidity)
+print("Volatile acidity is the amount of acetic acid in wine, which at too high 
+      of levels can lead to an unpleasant, vinegar taste. The mean and median 
+      are both about 0.30 g/dm^3. There are some outliers at the right side with
+      a maximum of almost 1.58 g/dm^3.")
+
 #total.acidity
-sup(ggplot(data = wine, aes(x=total.acidity)) + geom_histogram())
+ggplot(data = wine, aes(x=total.acidity)) + geom_histogram()
+summary(wine$total.acidity)
+print("Total acidity is the sum of fixed and volatile acidity. As can be 
+      expected from previous plots, there are some outliers at the right side.")
+
 #citric.acid
-sup(ggplot(data = wine, aes(x=citric.acid)) + geom_histogram())
+ggplot(data = wine, aes(x=citric.acid)) + geom_histogram()
+summary(wine$citric.acid)
+print("Citric acid can add 'freshness' and flavor to wines. It has a 'normalish'
+      distribution with a small peak at the left side and again some outliers at
+      the right side, with a maximum value of 1.66 g/dm^3.")
+
 #residual.sugar
-sup(ggplot(data = wine, aes(x=residual.sugar)) + geom_histogram())
+ggplot(data = wine, aes(x=residual.sugar)) + geom_histogram()
+summary(wine$residual.sugar)
+print("Residual sugar is the amount of sugar remaining after fermentation stops.
+      The distribution looks like the right side of a normal distribution, with
+      a peak at 0 g/dm^3. The mean is quite bigger than the median, which is 
+      caused by one or more big outlier(s).")
+
 #chlorides
-sup(ggplot(data = wine, aes(x=chlorides)) + geom_histogram())
+ggplot(data = wine, aes(x=chlorides)) + geom_histogram()
+summary(wine$chlorides)
+print("Chlorides is the amount of salt in the wine. It has a 'normalish' 
+      distribution around +- 0.05 g/dm³ with some outliers at the right side.")
+
 #free.sulfur.dioxide
-sup(ggplot(data = wine, aes(x=free.sulfur.dioxide)) + geom_histogram())
+ggplot(data = wine, aes(x=free.sulfur.dioxide)) + geom_histogram()
+summary(wine$free.sulfur.dioxide)
+print("Free sulfur dioxide is the free form of SO2. It has a 'normalish' 
+      distribution around +- 30 mg/dm^3 with some very high 
+      outliers (max=289 mg/dm^3)")
+
 #total.sulfur.dioxide
-sup(ggplot(data = wine, aes(x=total.sulfur.dioxide)) + geom_histogram())
+ggplot(data = wine, aes(x=total.sulfur.dioxide)) + geom_histogram()
+summary(wine$total.sulfur.dioxide)
+print("The total sulfur dioxide is the amount of free and bound forms of S02. 
+      It has a 'normalish' distribution with a mean of +-116 mg/dm^3. 
+      There are some outliers with a high value.")
+
 #density
-sup(ggplot(data = wine, aes(x=density)) + geom_histogram())
+ggplot(data = wine, aes(x=density)) + geom_histogram()
+summary(wine$density)
+print("The density represents the density of the wine, which is dependent on the
+      percent alcohol and sugar content. It has a 'normalish' distribution with
+    a mean of +- 0.995 and a max value of 1.0390 which is clearly an outlier.")
+
 #pH
-sup(ggplot(data = wine, aes(x=pH)) + geom_histogram())
+ggplot(data = wine, aes(x=pH)) + geom_histogram()
+summary(wine$pH)
+print("The pH features describes how acidic or basic a wine is on a scale from 0
+      (very acidic) to 14 (very basic). It has a 'normalish' distribution with
+      a mean of +- 3.2 and a max value of +- 4.0 which is an outlier.")
+
 #sulphates
-sup(ggplot(data = wine, aes(x=sulphates)) + geom_histogram())
+ggplot(data = wine, aes(x=sulphates)) + geom_histogram()
+summary(wine$sulphates)
+print("The sulphates is a wine additive wich acts as an antimicrobial and 
+      antioxidant.It has a 'normalish' distribution with
+      a mean of +- 0.53. It is clear from the plot that there are some outliers 
+      at the right side (max = 2.0).")
+
 #alcohol
-sup(ggplot(data = wine, aes(x=alcohol)) + geom_histogram())
+ggplot(data = wine, aes(x=alcohol)) + geom_histogram()
+summary(wine$alcohol)
+print("The percent alcohol content of the wine. The mean and median are a little
+      more than 10%, with some outliers at the high percentages and a maximum of
+      14,9%.")
+
 #color
-sup(ggplot(data = wine, aes(x=color)) + geom_histogram())
+ggplot(data = wine, aes(x=color)) + geom_histogram()
+summary(wine$color)
+print("The wine color which can either be red or wine. There are about 3 times
+      as many white wines as red wines in this dataset.")
 
 #quality
-sup(ggplot(data = wine, aes(x=quality)) + geom_bar(binwidth=1))
+ggplot(data = wine, aes(x=quality)) + geom_bar(binwidth=1)
+summary(wine$quality)
+print("Quality is a score between 0 and 10. It has a 'normalish' distribution
+      around 6 with a min and max of 3 and 9 respectively.")
 ```
 
 # Univariate Analysis
@@ -107,44 +180,76 @@ Most features that I plotted have a 'normalish' distribution, i.e. they have a p
 The plot of the residual.sugar however is different: it starts at a value of zero with the highest count and after that it only decreases. It looks like the right side of a normal distribution. 
 
 # Bivariate Plots Section
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
 
 #scatterplots for 2 variables
 wineQualityLow <- range(wine$quality)[1]
 wineQualityHigh <- range(wine$quality)[2]
 
 #fixed.acidity
-ggplot(data = wine, aes(x=fixed.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=fixed.acidity, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #volatile.acidity
-ggplot(data = wine, aes(x=volatile.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=volatile.acidity, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #total.acidity
-ggplot(data = wine, aes(x=total.acidity, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=total.acidity, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #citric.acid
-ggplot(data = wine, aes(x=citric.acid, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=citric.acid, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #residual.sugar
-ggplot(data = wine, aes(x=residual.sugar, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=residual.sugar, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #chlorides
-ggplot(data = wine, aes(x=chlorides, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=chlorides, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
+
 #free.sulfur.dioxide
-ggplot(data = wine, aes(x=free.sulfur.dioxide, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=free.sulfur.dioxide, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
+
 #total.sulfur.dioxide
-ggplot(data = wine, aes(x=total.sulfur.dioxide, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=total.sulfur.dioxide, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
+
 #density
-ggplot(data = wine, aes(x=density, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=density, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #pH
-ggplot(data = wine, aes(x=pH, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=pH, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #sulphates
-ggplot(data = wine, aes(x=sulphates, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=sulphates, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #alcohol
-ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=alcohol, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
+
 #color
-ggplot(data = wine, aes(x=color, y=quality)) + geom_boxplot() + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
+ggplot(data = wine, aes(y=color, x=factor(quality))) + 
+  geom_jitter(alpha=0.4)+geom_boxplot(alpha=0.4)
 
 #pH vs citric.acid
-ggplot(data = wine, aes(x=citric.acid, y=pH)) + geom_point() + xlim(0,0.75) + ylim(2.5, 3.75) + stat_smooth(method = "lm", col='red')
+ggplot(data = wine, aes(x=citric.acid, y=pH)) + geom_point(alpha=0.2) + 
+  xlim(0,0.75) + ylim(2.5, 3.75) + stat_smooth(method = "lm", col='red')
 
 #total.sulfur.dioxide vs free.sulfur.dioxide
-ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) + geom_point() +xlim(0,100) + ylim(0,250) + stat_smooth(method = "lm", col='red')
+ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) + 
+  geom_point(alpha=0.2) +xlim(0,100) + ylim(0,250) + 
+  stat_smooth(method = "lm", col='red')
+#TODO
 ```
 
 # Bivariate Analysis
@@ -164,25 +269,36 @@ The strongst relationship that I found is between the total.sulfur.dioxide and f
 
 # Multivariate Plots Section
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
 #plots with 3 variables
 
+printRegression = function(relation){
+  for (i in levels(wine$quality_level)) { 
+    print(i)
+    print(lm(data=wine[wine$quality_level %in% i,], relation)$coefficients[2])
+  }  
+}
+
 #alcohol vs sulphates, color by quality_level
-ggplot(data = wine, aes(x=sulphates, y=alcohol, color=quality_level)) + geom_point() 
+ggplot(data = wine, aes(x=sulphates, y=alcohol, color=quality_level)) + 
+  geom_point() +
+   geom_smooth(method="lm", fill=NA)
+printRegression(alcohol ~ sulphates)
+#TODO
 
 #alcohol vs chlorides, color by quality_level
-ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_point() 
+ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + 
+  geom_point() +
+   geom_smooth(method="lm", fill=NA)
+printRegression(alcohol ~ chlorides)
+#TODO
 
 #sulphates vs chlorides, color by quality_level
-ggplot(data = wine, aes(x=chlorides, y=sulphates, color=quality_level)) + geom_point() 
-
-#quality vs total.acidity, color by color 
-ggplot(data = wine, aes(x=total.acidity, y=quality, color=color)) + geom_point(alpha=1/5) + scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1))
-mean(wine[wine$color %in% 'red',]$total.acidity)
-mean(wine[wine$color %in% 'white',]$total.acidity)
-
-#total.sulfur.dioxide vs free.sulfur.dioxide, color by quality_level
-ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide, color=quality_level)) + geom_point() 
+ggplot(data = wine, aes(x=chlorides, y=sulphates, color=quality_level)) + 
+  geom_point() +
+   geom_smooth(method="lm", fill=NA)
+printRegression(sulphates ~ chlorides)
+#TODOs
 ```
 
 # Multivariate Analysis
@@ -203,11 +319,15 @@ When comparing differences between wine color, I found some interesting differen
 # Final Plots and Summary
 
 ### Plot One
-```{r echo=FALSE, Plot_One}
-#price
-ggplot(data = wine) + geom_histogram(aes(x=quality, y=..density..), binwidth=1, colour="black", fill="white") + 
-  stat_function(fun = dnorm, args = list(mean = mean(wine$quality), sd = sd(wine$quality)), lwd = 2, col = 'red') +
-  scale_x_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1), limits=c(3, 9)) +
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+#histogram of quality + normal distribution
+ggplot(data = wine) + geom_histogram(aes(x=quality, y=..density..), 
+                                     binwidth=1, colour="black", fill="white") + 
+  stat_function(fun = dnorm, 
+                args = list(mean = mean(wine$quality), 
+                            sd = sd(wine$quality)), lwd = 2, col = 'red') +
+  scale_x_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1), 
+                     limits=c(3, 9)) +
   xlab('Quality') + ylab('Wine density') +
   ggtitle("Wine quality density and normal distribution")
 ```
@@ -217,9 +337,10 @@ ggplot(data = wine) + geom_histogram(aes(x=quality, y=..density..), binwidth=1, 
 I have plotted the density of the quality of wines in a histogram plot. The histogram is overlapped with a normal distribution, that uses the mean and standard deviation from the quality variable. As can be seen, the histogram 'follows' the normal distribution quite well, it is a bit more shifted to the right.
 
 ### Plot Two
-```{r echo=FALSE, Plot_Two}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
 #alcohol vs chlorides, color by quality_level
-ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_point() + 
+ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + 
+  geom_point(alpha=0.2) +  geom_smooth(method="lm", fill=NA) +
   scale_x_continuous(breaks = seq(0,0.2,0.05), limits=c(0,0.2)) + 
   scale_y_continuous(breaks = seq(8,14,2), limits=c(8,14)) + 
   xlab('chlorides (g / dm^3)') + ylab('alcohol (% per volume)') +
@@ -231,11 +352,12 @@ ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + geom_poi
 I have plotted the alcohol of wines vs the chlorides and coloured it by the quality_level. The highest quality wines (with color blue) are mostly located at the upper left corner of the plot. This means that a high alcohol percentage and a low chlorides value are indicators for a high quality wine.
 
 ### Plot Three
-```{r echo=FALSE, Plot_Three}
-#alcohol
-ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=1/2) + 
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+#alcohol vs quality
+ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=0.2) + 
   stat_smooth(method = "lm", col='red') +
-  scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) +   scale_x_continuous(breaks = seq(8, 14, 1), limits=c(8,14)) +
+  scale_y_continuous(breaks = seq(wineQualityLow, wineQualityHigh, 1)) +  
+  scale_x_continuous(breaks = seq(8, 14, 1), limits=c(8,14)) +
   xlab('alcohol (% by volume)') + ylab('quality') +
   facet_wrap( ~ color) +
   ggtitle("Quality vs alcohol faceted by wine color")
