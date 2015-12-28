@@ -197,33 +197,37 @@ The strongst relationship that I found is between the total.sulfur.dioxide and f
 #plots with 3 variables
 
 # function to print regression for each quality level
-printRegression = function(columns){
+printRegressionForQualities = function(columns){
   for (i in levels(wine$quality_level)) { 
     print(i)
-    wine_per_quality = wine[wine$quality_level %in% i, columns]
-    print(cor(wine_per_quality)[2])
+    wine_per_quality = wine[wine$quality_level %in% i,]
+    printRegression(wine_per_quality, columns)
   }  
+}
+printRegression = function(data, columns){
+    dataForColumns = data[, columns]
+    print(cor(dataForColumns)[2])
 }
 
 #alcohol vs density, color by quality_level
 ggplot(data = wine, aes(x=density, y=alcohol, color=quality_level)) + 
   geom_point() + xlim(0.985, 1.005) +
    geom_smooth(method="lm", fill=NA)
-printRegression(c(9,12))
+printRegressionForQualities(c(9,12))
 print("The plot displays the alcohol vs density, colored by the quality level. The lines represent the correlation for the quality levels. As can be seen from the plot and from the coefficient: the better the quality, the stronger the correlation between the features.")
 
 #alcohol vs chlorides, color by quality_level
 ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + 
   geom_point() + xlim(0, 0.2) +
    geom_smooth(method="lm", fill=NA)
-printRegression(c(6,12))
+printRegressionForQualities(c(6,12))
 print("The plot displays the alcohol vs chlorides, colored by the quality level. Also in this plot the correlation is stronger for a higher quality wine.")
 
 #sulphates vs chlorides, color by quality_level
 ggplot(data = wine, aes(x=chlorides, y=sulphates, color=quality_level)) + 
   geom_point() + xlim(0, 0.2) + ylim(0.2, 1.3) +
    geom_smooth(method="lm", fill=NA)
-printRegression(c(6,11))
+printRegressionForQualities(c(6,11))
 print("The plot displays the sulphates vs chlorides, colored by the quality level. ")
 ```
 
@@ -266,18 +270,18 @@ I have plotted the density of the quality of wines in a histogram plot. The hist
 
 ### Plot Two
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
-#alcohol vs chlorides, color by quality_level
-ggplot(data = wine, aes(x=chlorides, y=alcohol, color=quality_level)) + 
+#alcohol vs density, color by quality_level
+ggplot(data = wine, aes(x=density, y=alcohol, color=quality_level)) + 
   geom_point(alpha=0.2) +  geom_smooth(method="lm", fill=NA) +
-  scale_x_continuous(breaks = seq(0,0.2,0.05), limits=c(0,0.2)) + 
+  scale_x_continuous(breaks = seq(0.985,1.005,0.005), limits=c(0.985, 1.005)) + 
   scale_y_continuous(breaks = seq(8,14,2), limits=c(8,14)) + 
-  xlab('chlorides (g / dm^3)') + ylab('alcohol (% per volume)') +
-  ggtitle("Alcohol % vs chlorides colored by quality_level")
+  xlab('density') + ylab('alcohol (% per volume)') +
+  ggtitle("Alcohol % vs density colored by quality_level")
 ```
 
 ### Description Two
 
-I have plotted the alcohol of wines vs the chlorides and coloured it by the quality_level. The highest quality wines (with color blue) are mostly located at the upper left corner of the plot. This means that a high alcohol percentage and a low chlorides value are indicators for a high quality wine.
+I have plotted the alcohol of wines vs the density and coloured it by the quality_level. The highest quality wines (with color blue) are mostly located at the upper left corner of the plot. This means that a high alcohol percentage and a low density are indicators for a high quality wine.
 
 ### Plot Three
 ```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
@@ -289,8 +293,8 @@ ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=0.2) +
   xlab('alcohol (% by volume)') + ylab('quality') +
   facet_wrap( ~ color) +
   ggtitle("Quality vs alcohol faceted by wine color")
-lm(quality ~ alcohol, data = redwine)
-lm(quality ~ alcohol, data = whitewine)
+printRegression(redwine, c(12,13))
+printRegression(whitewine, c(12,13))
 ```
 
 ### Description Three
@@ -300,4 +304,9 @@ I have plotted the quality of wine vs the alcohol percentage and facetted this b
 # Reflection
 
 The (combined) wine data set contains information on almost 6500 wines. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor in the quality of wine. In the boxplot of wine quality vs color, it can be seen that the quantiles are equal so color is not a major factor.
-In the final plots, I have tried to visualize some interesting insights from the data. The quality histogram (plot1) follows almost a normal distribution, so most wines in the dataset are close to the mean and median value.
+In the final plots, I have visualized some interesting insights from the data. The quality histogram (plot1) follows almost a normal distribution, so most wines in the dataset are close to the mean and median value.
+
+#TODO
+### Future work
+Please note that you are also expected to include in the reflection section a discussion about the struggles and successes throughout the analysis and at least one idea or question for future w
+
