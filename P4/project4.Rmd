@@ -204,6 +204,7 @@ printRegressionForQualities = function(columns){
     printRegression(wine_per_quality, columns)
   }  
 }
+#function to print regression for a dataframe and some columns
 printRegression = function(data, columns){
     dataForColumns = data[, columns]
     print(cor(dataForColumns)[2])
@@ -303,10 +304,10 @@ I have plotted the quality of wine vs the alcohol percentage and facetted this b
 
 # Reflection
 
-The (combined) wine data set contains information on almost 6500 wines. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor in the quality of wine. In the boxplot of wine quality vs color, it can be seen that the quantiles are equal so color is not a major factor.
-In the final plots, I have visualized some interesting insights from the data. The quality histogram (plot1) follows almost a normal distribution, so most wines in the dataset are close to the mean and median value.
+Starting with this project, I had a hard time figuring out how I could create meaningful plots for 2 or more features. The ggcorr function helped me a lot to find out about correlations between features. In that way I could make bivariate plots that have a medium to strong correlation. For the multivariate plots, I needed to add one other feature but because all the features are numbers or integers this was hard. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor and this way I had obtained a factor variable that I could use for the multivariate plots. In the boxplot of wine quality vs color, it can be seen that the quantiles are equal so color is not a major factor.
 
-#TODO
+In the final plots, I have visualized some interesting insights from the data. There is a strong correlation between alcohol and density, where there is a moderate correlation between quality and alcohol.
+
 ### Future work
 Please note that you are also expected to include in the reflection section a discussion about the struggles and successes throughout the analysis and at least one idea or question for future w
 
