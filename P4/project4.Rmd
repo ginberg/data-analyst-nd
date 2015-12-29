@@ -28,12 +28,6 @@ redwine$color = 'red'
 whitewine$color = 'white'
 wine <- rbind(redwine, whitewine)
 wine$color = factor(wine$color)
-wine$alcohol_level <- cut(wine$alcohol, 
- breaks = c(quantile(wine$alcohol, prob =   0), 
-            quantile(wine$alcohol, prob = .33), 
-            quantile(wine$alcohol, prob = .66), 
-            quantile(wine$alcohol, prob =   1)),
- labels = c("Low", "Medium", "High"), include.lowest=TRUE)
 wine$quality_level <- cut(wine$quality, 
  breaks = c(quantile(wine$quality, prob =   0), 
             quantile(wine$quality, prob = .33), 
@@ -138,7 +132,7 @@ I think all of the other features, except density, can have an impact on the qua
 
 ### Did you create any new variables from existing variables in the dataset?
 
-I have created alcohol_level and quality_level variables to be able to use them as a factor in the plots. Both have "low", "medium" and "high" levels.
+I have created a quality_level factor variable to be able to use this as a factor in the plots. It has the levels "low", "medium" and "high".
 
 ### Of the features you investigated, were theres any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
@@ -174,6 +168,13 @@ ggplot(data = wine, aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) +
   geom_point(alpha=0.2) +xlim(0,100) + ylim(0,250) + 
   stat_smooth(method = "lm", col='red')
 print("The correlation coefficient between total.sulfur.dioxide and free.sulfur.dioxide is 0.7, so it is strong. This is not a big surprise because the total.sulfur.dioxide contains the free.sulfur.dioxide.")
+
+#density vs residual.sugar
+ggplot(data = wine, aes(x=residual.sugar, y=density)) + 
+  geom_point(alpha=0.2) + xlim(0,25) + ylim(0.985,1.005) +
+  stat_smooth(method = "lm", col='red')
+print("The correlation coefficient between residual sugar and density is 0.6 so moderate to strong. ")
+
 ```
 
 # Bivariate Analysis
@@ -185,7 +186,7 @@ For the features alcohol and density there seems to be a negative trend, i.e. th
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
 
-I have looked at other relations between features and there seems to be a relationship between pH and citric.acid. When reading about acidity and ph levels, there is a logical explanation for this. The pH level of citric acid is 2.2 while wines mostly have a pH level between 2.9 and 3.9. So when more citric.acid, the pH level of the wine will drop.
+I have looked at other relations between features and there is a moderate to strong correlation between residual sugar and density. This correlation is not a big surprise, since the density of sugar is higher than the one of wine, but it is good to see this also from the plot.
 
 ### What was the strongest relationship you found?
 
@@ -209,6 +210,18 @@ printRegression = function(data, columns){
     dataForColumns = data[, columns]
     print(cor(dataForColumns)[2])
 }
+#print mean feature value for all qualities in the given dataset for all colors
+printMedianFeatureForQualitiesAndColor = function(dataset){
+  for (i in levels(dataset$color)) {   
+    wine_per_color = dataset[dataset$color %in% i,]
+    for (j in levels(wine_per_color$quality_level)) { 
+      print(i)
+      print(j)
+      wine_per_color_quality = wine_per_color[wine_per_color$quality_level %in% j,]
+      print(summary(wine_per_color_quality$volatile.acidity)[3])
+    }
+  }
+}
 
 #alcohol vs density, color by quality_level
 ggplot(data = wine, aes(x=density, y=alcohol, color=quality_level)) + 
@@ -229,20 +242,27 @@ ggplot(data = wine, aes(x=chlorides, y=sulphates, color=quality_level)) +
   geom_point() + xlim(0, 0.2) + ylim(0.2, 1.3) +
    geom_smooth(method="lm", fill=NA)
 printRegressionForQualities(c(6,11))
-print("The plot displays the sulphates vs chlorides, colored by the quality level. ")
+print("The plot displays the sulphates vs chlorides, colored by the quality level. The plot shows a stronger correlation for a higher quality, but the numbers don't support this, this is something to be investigated. ")
+
+#volatile acidity vs wine color, colored by quality level
+ggplot(data = wine, aes(x=color, y=volatile.acidity, color=quality_level)) + 
+   geom_jitter(alpha=0.4) + geom_boxplot(alpha=0.5) +
+   geom_smooth(method="lm", fill=NA) + ylim(0, 1.2)
+printMedianFeatureForQualitiesAndColor(wine)
+print("The plot displays the volatile acidity vs wine color, colored by the quality level. Red wine has a higher acidity level than white wine in general. The higher the wine quality the lower the level. Only the high and medium quality white wine is an exception, these values are equal.")
 ```
 
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
 
-When looking at the 3 plots, it seems like alcohol, sulphates and chlorides strengthened each other. The blue dots that stand for high quality wines are more dominant in the upper left corner (first 2 plots) or lower left corner (3rd plot). 
+The blue dots that stand for high quality wines are more dominant in the upper left corner (first 2 plots) or lower left corner (3rd plot). 
+When looking at the plots, it seems like sulphates and chlorides strengthen each other. The higher the quality, the stronger the correlation.
+The other plots indicate a negative correlation. 
 
 ### Were there any interesting or surprising interactions between features?
 
-When comparing differences between wine color, I found some interesting differences. The total acidity is for red wines quite higher than for white wines.
-
-### OPTIONAL: Did you create any models with your dataset? Discuss the strengths and limitations of your model.
+When comparing differences between wine color, I found some interesting differences. The volatile acidity is for red wines quite higher than for white wines.
 
 ------
 
@@ -294,20 +314,19 @@ ggplot(data = wine, aes(x=alcohol, y=quality)) + geom_point(alpha=0.2) +
   xlab('alcohol (% by volume)') + ylab('quality') +
   facet_wrap( ~ color) +
   ggtitle("Quality vs alcohol faceted by wine color")
+print("correlation coefficients for red- and white wine respectively:")
 printRegression(redwine, c(12,13))
 printRegression(whitewine, c(12,13))
 ```
 
 ### Description Three
 
-I have plotted the quality of wine vs the alcohol percentage and facetted this by the wine color. Also, added a line representing the lineair model. As can be seen, the plots for red and white wine look quite similair. There seems to be a positive correlation between alcohol and quality, independent of the color. The lineair model line for red wines is a little bit steeper compared to the white wine plot.
+I have plotted the quality of wine vs the alcohol percentage and facetted this by the wine color. Also, added a line representing the lineair model. As can be seen, the plots for red and white wine look quite similair. There is a positive correlation between alcohol and quality, independent of the color. The lineair model line for red wines is a little bit steeper compared to the white wine plot.
 
 # Reflection
 
-Starting with this project, I had a hard time figuring out how I could create meaningful plots for 2 or more features. The ggcorr function helped me a lot to find out about correlations between features. In that way I could make bivariate plots that have a medium to strong correlation. For the multivariate plots, I needed to add one other feature but because all the features are numbers or integers this was hard. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor and this way I had obtained a factor variable that I could use for the multivariate plots. In the boxplot of wine quality vs color, it can be seen that the quantiles are equal so color is not a major factor.
+Starting with this project, I had a hard time figuring out how I could create meaningful plots for 2 or more features. The ggcorr function helped me a lot to find out about correlations between features. In that way I could make bivariate plots that have a medium to strong correlation. For the multivariate plots, I needed to add one other feature but because all the features are numbers or integers this was not so easy. I decided to add the red and wine datasets, because I was interested to see if the color of wine is a major factor and this way I had obtained a factor variable that I could use for the multivariate plots. Because quality is the feature of interest, I decided to create a factor quality_level to be able to use this also in the plots.
 
-In the final plots, I have visualized some interesting insights from the data. There is a strong correlation between alcohol and density, where there is a moderate correlation between quality and alcohol.
+In the final plots, I have visualized some interesting insights from the data. There is a strong correlation between alcohol and density, where there is a moderate correlation between quality and alcohol. The quality feature follows the pattern of a normal distribution.
 
-### Future work
-Please note that you are also expected to include in the reflection section a discussion about the struggles and successes throughout the analysis and at least one idea or question for future w
-
+I didn't have the possibility to investigate on all relations between features. Some other relations that could be explored are total.sulfur.dioxide vs residual sugar. Also, some other feature could be created, for example a factor alcohol_level to investigate if the alcohol level makes a big difference in the correlation between other features.
