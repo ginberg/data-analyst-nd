@@ -217,8 +217,8 @@ printMedianFeatureForQualitiesAndColor = function(dataset){
     for (j in levels(wine_per_color$quality_level)) { 
       print(i)
       print(j)
-      wine_per_color_quality = wine_per_color[wine_per_color$quality_level %in% j,]
-      print(summary(wine_per_color_quality$volatile.acidity)[3])
+      wine_per_color_qual = wine_per_color[wine_per_color$quality_level %in% j,]
+      print(summary(wine_per_color_qual$volatile.acidity)[3])
     }
   }
 }
