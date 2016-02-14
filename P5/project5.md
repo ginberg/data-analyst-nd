@@ -14,19 +14,22 @@ My ideal behind this feature is, that a poi might be given a relatively high bon
 
 ## Algorithm
 
-I have used a DecisionTreeClassifier
+I have tried multiple classifiers to see the effect on the accuracy. 
+
+So, for the final I have used a DecisionTreeClassifier.
 
 
 ## Algorithm tuning
 
-I have used GridSearchCV to tune my algorithm
+With algorithm tuning a better performance can be made.
+I have used GridSearchCV to tune my algorithm.
 
 
 ## Validation strategy
 
-
+StratifiedShuffleSplit
 
 
 ## Evaluation metrics
 
-Precision/Recall
+Accuracy/ Precision/ Recall

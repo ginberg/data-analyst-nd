@@ -4,26 +4,21 @@ import sys
 import pickle
 sys.path.append("../../ud120-projects/tools/")
 import csv, os
+from itertools import compress
 
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
-import numpy as np
 import matplotlib.pyplot
 
 from sklearn import tree
-from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 from sklearn import cross_validation
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_selection import SelectKBest, SelectPercentile
-from sklearn.grid_search import GridSearchCV
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.cross_validation import train_test_split
+from sklearn.grid_search import GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
@@ -37,8 +32,7 @@ financial_features =  ['salary', 'deferral_payments', 'total_payments',
 email_features =      ['to_messages', 'from_poi_to_this_person', 
                        'from_messages', 'from_this_person_to_poi', 
                        'shared_receipt_with_poi']
-created_features =    ['bonus_to_salary']
-features_list = feature_of_interest + financial_features + email_features + created_features
+features_list = feature_of_interest + financial_features + email_features
 
 ### Load the dictionary containing the dataset
 with open("data/final_project_dataset.pkl", "r") as data_file:
@@ -189,12 +183,11 @@ features_train, features_test, labels_train, labels_test = cross_validation.trai
 #clf = GaussianNB()
 #scaler = MinMaxScaler()
 #knn = KNeighborsClassifier()
-#estimators = [('selector', selector), ('scaler', scaler), ('knn', knn)]
 
-scaler = StandardScaler()
-selector = SelectKBest(k=20)
+scaler = MinMaxScaler()
+selector = SelectKBest()
 decisionTreeClasssifier = tree.DecisionTreeClassifier()
-estimators = [('selector', selector), ('scaler', scaler), ('tree', decisionTreeClasssifier)]
+estimators = [('scaler', scaler), ('selector', selector), ('tree', decisionTreeClasssifier)]
 pipeline = Pipeline(estimators)
 pipeline.fit(features_train, labels_train)
 pred = pipeline.predict(features_test)
@@ -212,12 +205,14 @@ print "accuracy:", acc
 
 features_train, features_test, labels_train, labels_test = \
     train_test_split(features, labels, test_size=0.3, random_state=42)
-    
+
 # parameterss for decision tree
-param_grid = [{'tree__criterion': ['gini', 'entropy'],
-               'tree__splitter': ['best', 'random'],
-               'tree__max_depth': [1,2,3,4,5,6,7,8],
-               'tree__min_samples_split': [1,2,3,4,5,6,7,8]
+param_grid = [{
+                'selector__k': [5,10,20,'all'],    
+                'tree__criterion': ['gini', 'entropy'],
+                'tree__splitter': ['best', 'random'],
+                'tree__max_depth': [1,2,3,4,5,6,7,8],
+                'tree__min_samples_split': [1,2,3,4,5,6,7,8]
              }]
 
 # add StratifiedShuffleSplit for cross validation. It improves perforamnce because it keeps in mind the relative occurence of labels
@@ -229,7 +224,14 @@ acc = accuracy_score(pred, labels_test)
 # return the best estimator as input for tester.py!
 clf = gridSearch.best_estimator_
 print "accuracy with gridsearch:", acc
-print "best_estimator", clf
+print "best_estimator:", clf
+#print clf.named_steps['selector'].get_support()
+features = clf.named_steps['selector']
+support = features.get_support()
+features_list_without_poi = features_list[:]
+del features_list_without_poi[0]
+#print chosen features
+print "selected_features:", list(compress(features_list_without_poi, support))
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure

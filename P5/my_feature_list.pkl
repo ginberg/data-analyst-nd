@@ -41,7 +41,6 @@ aS'shared_receipt_with_poi'
 p20
 aS'bonus_to_salary'
 p21
-ag21
 aS'fraction_from_poi'
 p22
 aS'fraction_to_poi'
