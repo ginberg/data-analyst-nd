@@ -30,11 +30,14 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
     false_negatives = 0
     true_positives = 0
     false_positives = 0
+    #print len(labels)
     for train_idx, test_idx in cv: 
         features_train = []
         features_test  = []
         labels_train   = []
         labels_test    = []
+        #print "train", train_idx
+        #print "test", test_idx
         for ii in train_idx:
             features_train.append( features[ii] )
             labels_train.append( labels[ii] )
@@ -43,7 +46,12 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
             labels_test.append( labels[jj] )
         
         ### fit the classifier using training set, and test on test set
-        clf.fit(features_train, labels_train)
+        #print "features", len(features_train)
+        #print "labels", len(labels_train)
+        try:
+            clf.fit(features_train, labels_train)
+        except:
+            clf.fit(np.array(features_train), np.array(labels_train))
         predictions = clf.predict(features_test)
         for prediction, truth in zip(predictions, labels_test):
             if prediction == 0 and truth == 0:
@@ -99,6 +107,7 @@ def main():
     ### load up student's classifier, dataset, and feature_list
     clf, dataset, feature_list = load_classifier_and_data()
     ### Run testing script
+    #print clf
     test_classifier(clf, dataset, feature_list)
 
 if __name__ == '__main__':
