@@ -40,7 +40,8 @@ with open("data/final_project_dataset.pkl", "r") as data_file:
 
 def datasetExploration():    
     print('Dataset Exploration')
-    print('Number of data points: %d' % len(data_dict.keys()))
+    print('Number of people: %d' % len(data_dict.keys()))
+    print('Number of features: %d' % len(data_dict.values()[0]))
     data_dict.keys()
     poi_count = 0
     for name in data_dict.keys():
@@ -70,7 +71,7 @@ def writeDataToCsv(filename):
             writer.writerow(props)
     print('Content written to %s' % filename)
 
-#datasetExploration()
+datasetExploration()
 #writeDataToCsv("data/enron.csv")
 
 ### Task 2: Remove outliers
@@ -91,9 +92,7 @@ def plotFeatures(X, Y):
 #plotFeatures('total_payments', 'total_stock_value')
 salary_bonus_outlier_list = [k for k in data_dict.keys() 
         if data_dict[k]["salary"] != 'NaN' and data_dict[k]["salary"] > 1000000 and data_dict[k]["bonus"] > 10000000]
-print salary_bonus_outlier_list
-payments_outlier_list = [k for k in data_dict.keys() 
-        if data_dict[k]["total_payments"] != 'NaN' and data_dict[k]["total_payments"] > 100000000]
+print "ExtremeSalaryAndBonus:", salary_bonus_outlier_list
 
 def checkPersonsWithManyNaNValues():
     for person in data_dict:
@@ -104,8 +103,8 @@ def checkPersonsWithManyNaNValues():
             if value == 'NaN':
                 count += 1
         if count >= 18:
-            print person
-#checkPersonsWithManyNaNValues()
+            print "manyNaN:", person
+checkPersonsWithManyNaNValues()
 
 """ removes list of outliers keys from dict object """
 def remove_outliers(dict_object, keys):
@@ -186,14 +185,16 @@ features_train, features_test, labels_train, labels_test = cross_validation.trai
 
 scaler = MinMaxScaler()
 selector = SelectKBest()
-decisionTreeClasssifier = tree.DecisionTreeClassifier()
-estimators = [('scaler', scaler), ('selector', selector), ('tree', decisionTreeClasssifier)]
+classifier = tree.DecisionTreeClassifier()
+#classifier = GaussianNB()
+#classifier = svm.SVC()
+estimators = [('scaler', scaler), ('selector', selector), ('tree', classifier)]
 pipeline = Pipeline(estimators)
 pipeline.fit(features_train, labels_train)
 pred = pipeline.predict(features_test)
 acc = accuracy_score(pred, labels_test)
 print "accuracy:", acc
-
+#sys.exit()
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
 ### folder for details on the evaluation method, especially the test_classifier
@@ -213,7 +214,7 @@ param_grid = [{
                 'tree__splitter': ['best', 'random'],
                 'tree__max_depth': [1,2,3,4,5,6,7,8],
                 'tree__min_samples_split': [1,2,3,4,5,6,7,8]
-             }]
+             }]                        
 
 # add StratifiedShuffleSplit for cross validation. It improves perforamnce because it keeps in mind the relative occurence of labels
 cv = StratifiedShuffleSplit(labels, random_state=42)
