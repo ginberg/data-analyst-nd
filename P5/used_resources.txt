@@ -3,5 +3,6 @@ http://scikit-learn.org/
 https://plus.google.com/u/0/events/cklq378vgqd7bsv2emmnsokm54k?authkey=CP2r_ITsqquS6QE
 http://stackoverflow.com/questions/18665873/filtering-a-list-based-on-a-list-of-booleans
 http://stackoverflow.com/questions/2612802/how-to-clone-or-copy-a-list-in-python
+http://www.analyticsvidhya.com/blog/2016/02/7-important-model-evaluation-error-metrics/
 
 I hereby confirm that this submission is my work. I have cited above the origins of any parts of the submission that were taken from Websites, books, forums, blog posts, github repositories, etc.
