@@ -9,19 +9,57 @@ that provides computers with the ability to learn without being explicitly progr
 a poi, I will use supervised algorithms. The idea of such an algorithm is the find the underlying patterns that determine the outcome feature (poi). 
 Furthermore, the algorithm to use will be a classifier, because the output feature has only 2 possible outcomes, True or False.</p>
 <h2>Dataset exploration and cleaning</h2>
-<p>First, I have explored the dataset. Because the input file is in a format that is hard to read, I have transformed it to a csv file.</p>
-<p>TODO: outliers
-TODO:exploration</p>
+<p>First, I have explored the dataset. Because the input file is in a format that is hard to read, I have transformed it to a csv file. 
+Next, I have done some exploratory data analysis. One of the first things I noticed, is that there are only 146 observations (people) in the dataset.
+Of these 146, 18 persons are a poi and 128 are not. There are 21 features per person.</p>
+<p>I have created a function, plotFeatures, to be able to plot 2 features against each other. In that way, it is possible to see if there are outliers.
+A useful plot is the salary vs bonus plot. There is a huge outlier called 'TOTAL' in this plot. After investigation, this is the total value of salary
+and bonus for all the people in the dataset! So, this observation should be removed from the dataset.</p>
+<p>Because I noticed quite a lot of NaN values, I have looked at persons with many NaN's. There were 5 people with 18 or more NaN values. 
+One of these is named 'THE TRAVEL AGENCY IN THE PARK'. Because this is clearly not an employee of Enron, this observation is also removed from the dataset.</p>
+<p>Machine learning algorithms normally normally can't handle NaN values very good, so these should be handled. Most of the features have an integer
+value and some have a string value.</p>
 <h2>Feature selection</h2>
-<p>I have used SelectKBest to select the best features from the input features. The input features are the features that were supplied from the dataset plus 1 have added. 
-My ideal behind this feature is, that a poi might be given a relatively high bonus compared to others. That is why I have added a bonus to salary feature.</p>
+<p>I have used SelectKBest to select the best features from the input features. The input features are the features that were supplied from the dataset 
+plus 3 features that have added. 
+Why have I added these features?
+I have some ideas about a poi, namely
+- they might have got a relatively high bonus compared to other people. Because the reason for commiting fraud might be to get a lot of money. Imagine your
+salary is not that high yet (because you have just started), than you will have to get a high bonus. Thus the ratio, bonus to salary will be high.
+- a poi communicates relatively more with other poi than with non-poi. This is because you probably want to make some appointments on how to commit fraud
+or just because fraudulent people are more attraced to each other.
+For the first point, I have used the bonus_to_salary feature, for the 2nd I have added fraction_from_poi and fraction_to_poi.</p>
 <h2>Algorithm</h2>
-<p>I have tried multiple classifiers to see the effect on the accuracy. </p>
-<p>So, for the final I have used a DecisionTreeClassifier.</p>
+<p>I have tried multiple algorithms to see the effect on accuracy. As said in the introduction, I need to use a classification algorithm. The package sklearn
+provides multiple of these algorithms that I can use, SVM, nearest neighbors, decision trees or an ensemble method like random forests.
+I have added these classifiers to the pipeline one by one and looked at the effect on the accuracy, precision and recall. Some algorithms had a better performance
+before parameter tuning than others while others improved quite a lot with parameter tuning.
+In the end, I had the best performance with the DecisionTreeClassifier so I have choses this algorithm.</p>
 <h2>Algorithm tuning</h2>
-<p>With algorithm tuning a better performance can be made.
-I have used GridSearchCV to tune my algorithm.</p>
-<h2>Validation strategy</h2>
-<p>StratifiedShuffleSplit</p>
+<p>With algorithm tuning a better performance can be made. 
+I have used GridSearchCV to tune my algorithm because it can evaluate performance for parameter combinations given a list of input parameters.
+It will return the paramater combination that has the best performance given a scoring function. The default scoring is accuracy, some other options
+are precision and recall.</p>
+<h2>Cross Validation strategy</h2>
+<p>Cross validation is important to be able to create a model that doesn't overfit to the data. It is best to use a K-fold cross validation in order to make 
+sure all observations are used for both training and validation in the k-runs. So, the first cross validator I used was KFold, but it didn't perform
+very well, especially I had problems getting the recall at a good level. 
+That is probably caused by the characteristics of the dataset: the amount of poi's is only 12,3%. So when splitting our data into training and testing sets,
+it might be that there are no poi's at all in a training set and thus it is not possible to make a good model. The StratifiedKFold makes sure
+that the folds are made with preserving the percentage of samples in each class. When comparing this one to KFold, it gives a better performance, but not
+good enough.
+Another issue with out dataset might be that the observations are ordered in some way and in this way influencing the results. In order to shuffle the data
+before splitting it into a training and testing set, a shuffle strategy can be used. The StratifiedShuffleSplit validator combines the shuffling, with
+the StratifiedKFold. Because I did gave me the best results, I have used this cross validator.</p>
 <h2>Evaluation metrics</h2>
-<p>Accuracy/ Precision/ Recall</p>
+<p>To evaluate the performance, I have looked at accuracy, precision and recall. Because the precision and recall had to be at least 0.3 and that turned
+out to be quite a challenge, I have focussed on those metrics.
+Precision and recall can be best explained by a [confusion matrix] (http://www.analyticsvidhya.com/wp-content/uploads/2015/01/Confusion_matrix.png). The
+output of the model is horizontal, where the real output is vertical. Furthermore, positive is the case when a poi is identified and negative when
+it is not a poi. Precision is defined as the proportion of positive cases that were identified correct by the model.
+Recall (or sensivity) is defined as the proportion of actual positive cases that were correctly identified.</p>
+<p>The average of my metrics for multiple runs are given below
+Accuracy: 0,85838       Precision: 0,46560      Recall: 0,42067</p>
+<p>What do these numbers say? In almost 86% the model gives the right answer if a person is a poi. With guessing you will do 50%, so the model is quite better
+than guessing fortunately.
+In almost half the cases where the model says the person is a poi, it is right. For all poi, the model will detect a little more than 40% of them.</p>

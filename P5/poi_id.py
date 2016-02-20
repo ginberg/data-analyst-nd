@@ -167,11 +167,6 @@ data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(features, labels, test_size=0.3, random_state=42)
 
-#select top 10 features to use
-#selectedFeatures = selector.fit(features, labels)
-#feature_names = [features_list[i+1] for i in selectedFeatures.get_support(indices = True)]
-#print "SelectKBest features:", feature_names
-
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
 ### Note that if you want to do PCA or other multi-stage operations,
@@ -179,9 +174,6 @@ features_train, features_test, labels_train, labels_test = cross_validation.trai
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Provided to give you a starting point. Try a variety of classifiers.
-#clf = GaussianNB()
-#scaler = MinMaxScaler()
-#knn = KNeighborsClassifier()
 
 scaler = MinMaxScaler()
 selector = SelectKBest()
@@ -217,7 +209,10 @@ param_grid = [{
              }]                        
 
 # add StratifiedShuffleSplit for cross validation. It improves perforamnce because it keeps in mind the relative occurence of labels
+#cv = KFold(n=3)
+#cv = StratifiedKFold(labels, random_state=42, shuffle=True)
 cv = StratifiedShuffleSplit(labels, random_state=42)
+
 gridSearch = GridSearchCV(pipeline, param_grid, cv=cv)
 gridSearch.fit(features, labels)
 pred = gridSearch.predict(features_test)

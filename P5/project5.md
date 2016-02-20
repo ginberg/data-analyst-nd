@@ -12,7 +12,6 @@ that provides computers with the ability to learn without being explicitly progr
 a poi, I will use supervised algorithms. The idea of such an algorithm is the find the underlying patterns that determine the outcome feature (poi). 
 Furthermore, the algorithm to use will be a classifier, because the output feature has only 2 possible outcomes, True or False.
 
-
 ## Dataset exploration and cleaning
 
 First, I have explored the dataset. Because the input file is in a format that is hard to read, I have transformed it to a csv file. 
@@ -31,9 +30,15 @@ value and some have a string value.
 
 ## Feature selection
 
-I have used SelectKBest to select the best features from the input features. The input features are the features that were supplied from the dataset plus 1 have added. 
-My ideal behind this feature is, that a poi might be given a relatively high bonus compared to others. That is why I have added a bonus to salary feature.
-
+I have used SelectKBest to select the best features from the input features. The input features are the features that were supplied from the dataset 
+plus 3 features that have added. 
+Why have I added these features?
+I have some ideas about a poi, namely
+- they might have got a relatively high bonus compared to other people. Because the reason for commiting fraud might be to get a lot of money. Imagine your
+salary is not that high yet (because you have just started), than you will have to get a high bonus. Thus the ratio, bonus to salary will be high.
+- a poi communicates relatively more with other poi than with non-poi. This is because you probably want to make some appointments on how to commit fraud
+or just because fraudulent people are more attraced to each other.
+For the first point, I have used the bonus_to_salary feature, for the 2nd I have added fraction_from_poi and fraction_to_poi.
 
 ## Algorithm
 
@@ -45,15 +50,37 @@ In the end, I had the best performance with the DecisionTreeClassifier so I have
 
 ## Algorithm tuning
 
-With algorithm tuning a better performance can be made.
-I have used GridSearchCV to tune my algorithm.
+With algorithm tuning a better performance can be made. 
+I have used GridSearchCV to tune my algorithm because it can evaluate performance for parameter combinations given a list of input parameters.
+It will return the paramater combination that has the best performance given a scoring function. The default scoring is accuracy, some other options
+are precision and recall.
 
+## Cross Validation strategy
 
-## Validation strategy
-
-StratifiedShuffleSplit
-
+Cross validation is important to be able to create a model that doesn't overfit to the data. It is best to use a K-fold cross validation in order to make 
+sure all observations are used for both training and validation in the k-runs. So, the first cross validator I used was KFold, but it didn't perform
+very well, especially I had problems getting the recall at a good level. 
+That is probably caused by the characteristics of the dataset: the amount of poi's is only 12,3%. So when splitting our data into training and testing sets,
+it might be that there are no poi's at all in a training set and thus it is not possible to make a good model. The StratifiedKFold makes sure
+that the folds are made with preserving the percentage of samples in each class. When comparing this one to KFold, it gives a better performance, but not
+good enough.
+Another issue with out dataset might be that the observations are ordered in some way and in this way influencing the results. In order to shuffle the data
+before splitting it into a training and testing set, a shuffle strategy can be used. The StratifiedShuffleSplit validator combines the shuffling, with
+the StratifiedKFold. Because I did gave me the best results, I have used this cross validator.
 
 ## Evaluation metrics
 
-Accuracy/ Precision/ Recall
+To evaluate the performance, I have looked at accuracy, precision and recall. Because the precision and recall had to be at least 0.3 and that turned
+out to be quite a challenge, I have focussed on those metrics.
+Precision and recall can be best explained by a [confusion matrix] (http://www.analyticsvidhya.com/wp-content/uploads/2015/01/Confusion_matrix.png). The
+output of the model is horizontal, where the real output is vertical. Furthermore, positive is the case when a poi is identified and negative when
+it is not a poi. Precision is defined as the proportion of positive cases that were identified correct by the model.
+Recall (or sensivity) is defined as the proportion of actual positive cases that were correctly identified.
+
+The average of my metrics for multiple runs are given below
+Accuracy: 0,85838       Precision: 0,46560      Recall: 0,42067
+
+What do these numbers say? In almost 86% the model gives the right answer if a person is a poi. With guessing you will do 50%, so the model is quite better
+than guessing fortunately.
+In almost half the cases where the model says the person is a poi, it is right. For all poi, the model will detect a little more than 40% of them.
+
