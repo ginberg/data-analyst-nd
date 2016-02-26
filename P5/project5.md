@@ -44,9 +44,37 @@ For the first point, I have used the bonus_to_salary feature, for the 2nd I have
 
 I have tried multiple algorithms to see the effect on accuracy. As said in the introduction, I need to use a classification algorithm. The package sklearn
 provides multiple of these algorithms that I can use, SVM, nearest neighbors, decision trees or an ensemble method like random forests.
-I have added these classifiers to the pipeline one by one and looked at the effect on the accuracy, precision and recall. Some algorithms had a better performance
+I have a couple of these classifiers to the pipeline one by one and looked at the effect on the accuracy, precision and recall. Some algorithms had a better performance
 before parameter tuning than others while others improved quite a lot with parameter tuning.
 In the end, I had the best performance with the DecisionTreeClassifier so I have choses this algorithm.
+Below the results of the different classifiers (average of 3 runs)
+
+<table>
+  <tr>
+    <th>Classifier</th>
+    <th>Accuracy</th>
+    <th>Precision</th>
+    <th>Recall</th>
+  </tr>
+  <tr>
+    <td>SVM</td>
+    <td>0.87313</td>
+    <td>0.9899</td>
+    <td>0.049</td>
+  </tr>
+  <tr>
+    <td>KNeighbors</td>
+    <td>0.84053</td>
+    <td>0.19375</td>
+    <td>0.062</td>
+  </tr>
+  <tr>
+    <td>DecisionTree</td>
+    <td>0.85789</td>
+    <td>0.46369</td>
+    <td>0.4202</td>
+  </tr>
+</table>
 
 ## Algorithm tuning
 
@@ -55,11 +83,20 @@ I have used GridSearchCV to tune my algorithm because it can evaluate performanc
 It will return the paramater combination that has the best performance given a scoring function. The default scoring is accuracy, some other options
 are precision and recall.
 
-## Cross Validation strategy
+## (Cross) Validation strategy
 
-Cross validation is important to be able to create a model that doesn't overfit to the data. It is best to use a K-fold cross validation in order to make 
-sure all observations are used for both training and validation in the k-runs. So, the first cross validator I used was KFold, but it didn't perform
-very well, especially I had problems getting the recall at a good level. 
+When using all the available data to train the classifier, it probably overfits to the data. This means that it is customized too much
+to the data and it will probably not perform very well to a new data set. Therefore it is best to split the data in a training set
+and a testing set. This is better because we can measure the performance on a part of the data (testing set) that is not used to train the model.
+However, it is possible to tweak the classifier parameters to improve the performance on the testing set. So in a way, still all the data is used
+to optimize the model, which can cause overfitting. Therefore a separate part of the data set can be used to validate the performance, it is called
+the validation set. Validation means to compute a performance measure (e.g. accuracy) on the validation set.
+However, by partitioning the available data into three sets, the number of samples which can be used to train the the model is reduced.
+Also the results can depend on a particular random choice for the train and validation sets. 
+
+Cross validation solves this issue, because it doesn't need a validation set. The data is split into a training set and a testing set. Part of the training set is 
+used to evaluate the performance. It is best to use a K-fold cross validation in order to make sure all observations are used for both training and validation in the k-runs. 
+So, the first cross validator I used was KFold, but it didn't perform very well, especially I had problems getting the recall at a good level. 
 That is probably caused by the characteristics of the dataset: the amount of poi's is only 12,3%. So when splitting our data into training and testing sets,
 it might be that there are no poi's at all in a training set and thus it is not possible to make a good model. The StratifiedKFold makes sure
 that the folds are made with preserving the percentage of samples in each class. When comparing this one to KFold, it gives a better performance, but not
@@ -77,10 +114,6 @@ output of the model is horizontal, where the real output is vertical. Furthermor
 it is not a poi. Precision is defined as the proportion of positive cases that were identified correct by the model.
 Recall (or sensivity) is defined as the proportion of actual positive cases that were correctly identified.
 
-The average of my metrics for multiple runs are given below
-Accuracy: 0,85838       Precision: 0,46560      Recall: 0,42067
-
-What do these numbers say? In almost 86% the model gives the right answer if a person is a poi. With guessing you will do 50%, so the model is quite better
-than guessing fortunately.
+The average of my metrics for the DecisionTreeClassifier can be found in the Algorithm section. But hat do the numbers numbers say, in context of the enron case? 
+In almost 86% the model gives the right answer if a person is a poi. With guessing you will do 50%, so the model is quite better than guessing fortunately.
 In almost half the cases where the model says the person is a poi, it is right. For all poi, the model will detect a little more than 40% of them.
-

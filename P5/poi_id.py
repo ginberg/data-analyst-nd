@@ -19,6 +19,8 @@ from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
+#from sklearn.svm import SVC
+#from sklearn.neighbors import KNeighborsClassifier
 
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
@@ -178,8 +180,8 @@ features_train, features_test, labels_train, labels_test = cross_validation.trai
 scaler = MinMaxScaler()
 selector = SelectKBest()
 classifier = tree.DecisionTreeClassifier()
-#classifier = GaussianNB()
-#classifier = svm.SVC()
+#classifier = KNeighborsClassifier()
+#classifier = SVC()
 estimators = [('scaler', scaler), ('selector', selector), ('tree', classifier)]
 pipeline = Pipeline(estimators)
 pipeline.fit(features_train, labels_train)
@@ -206,9 +208,21 @@ param_grid = [{
                 'tree__splitter': ['best', 'random'],
                 'tree__max_depth': [1,2,3,4,5,6,7,8],
                 'tree__min_samples_split': [1,2,3,4,5,6,7,8]
-             }]                        
+             }]
+#knn_param_grid = [{
+#                'selector__k': [5,10,20,'all'],    
+#                'tree__n_neighbors': [3,5,s8],
+#                'tree__weights': ['uniform', 'distance'],
+#                'tree__algorithm': ['auto', 'ball_tree', 'kd_tree'],
+#                'tree__leaf_size': [1,5,10,20,30,40,50]
+#             }]
+#svm_param_grid = [{
+#                'selector__k': [5,10,20,'all'],    
+#                'tree__C': [0.1, 0.25, 0.5, 0.75, 1.0],
+#                'tree__kernel': ['rbf','linear', 'poly'],
+#                'tree__gamma': [0.1, 0.25, 0.5, 0.75, 1.0]}]                         
 
-# add StratifiedShuffleSplit for cross validation. It improves perforamnce because it keeps in mind the relative occurence of labels
+# add StratifiedShuffleSplit for cross validation. It improves performance because it keeps in mind the relative occurence of labels
 #cv = KFold(n=3)
 #cv = StratifiedKFold(labels, random_state=42, shuffle=True)
 cv = StratifiedShuffleSplit(labels, random_state=42)
