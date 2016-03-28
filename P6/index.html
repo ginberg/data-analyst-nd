@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+  <!--<script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>-->
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/dimple.v2.0.0.min.js"></script>
+  
+  <style>
+      h2 {
+        text-align: center;
+        color: black;
+      }
+
+      div.years_buttons {
+        position: fixed;
+        top: 50px;
+        left: 50px;
+      }
+
+      div.years_buttons div {
+        background-color: rgb(251, 201, 127);
+        padding: 3px;
+        margin: 7px;
+      }
+      
+      svg {
+        position: absolute;
+        left: 150px;
+      }
+      
+      .tooltip {
+        position: absolute;
+        width: 300px;
+        height: 30px;
+        pointer-events: none;
+      }
+      .select {
+        position: fixed;
+        top: 350px;
+        left: 50px;
+      }
+      
+    </style>
+    <script type="text/javascript">
+    
+    /* D3.js setup code*/
+    "use strict";
+    var margin = 75,
+        width = 1400 - margin,
+        height = 600 - margin;
+
+    function carrier_info(d) {
+      return carrierMap[d.cx] + " - " + (100*d.cy).toFixed(2) + " %";
+    }
+    
+    function mouseover_f(d) {
+      //console.log("onmouseover");
+      d3.select(this).style("stroke", "black");
+      var tooltip = d3.select(".tooltip");
+      tooltip.transition().style("opacity", 1);
+      tooltip.html(carrier_info(d))
+             .style("left", (d3.event.pageX + 5) + "px")
+             .style("top", (d3.event.pageY - 50) + "px");
+    }
+    function mouseout_f(d) {
+      d3.select(this).style("stroke", "");
+      var tooltip = d3.select(".tooltip");
+      tooltip.transition().style("opacity", 0);
+    }
+    
+    //Use D3 to load the CSV file and pass the contents of it to the draw function
+    var carrierMap = {};
+    var delayTypes = [];
+    d3.csv('data/246437956_122015_1436_airline_delay_causes_result.csv', function(error, rows) {
+      rows.forEach(function(d){
+        carrierMap[d.carrier] = [d.carrier_name];
+      });
+      var row = rows[0];
+      var names = Object.keys(row);
+      delayTypes = names.filter(function(name) { return name.endsWith("delay")});
+      delayTypes = delayTypes.reverse();
+      console.log(delayTypes);
+      console.log(carrierMap);
+      draw(rows);
+    });
+    
+    //draw the plot
+    function draw(data) {
+      d3.select("body").append("h2").text("US Flight delays per carrier in 2010-2015");
+      
+      var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0); 
+    
+      var svg = d3.select("body")
+        .append("svg")
+          .attr("width", width + margin)
+          .attr("height", height + margin)
+          .append('g')
+          .attr('class','chart');
+          
+      //Dimple.js Chart construction code
+      var myChart = new dimple.chart(svg, data);
+      var x = myChart.addCategoryAxis("x", "carrier");
+      var y = myChart.addMeasureAxis("y", "total_delay.pct");
+      y.tickFormat = ',.2f';
+      var mySeries = myChart.addSeries(null, dimple.plot.bar);
+      myChart.data = dimple.filterData(data, "year", ["2010", "2011", "2012", "2013", "2014", "2015"]);
+      myChart.draw();
+      
+      //add mouse events
+      svg.selectAll('rect')
+        .on("mouseover", mouseover_f)
+        .on("mouseout", mouseout_f);
+      
+      //update graph to selected year
+      function update(year) {
+          d3.select("body").select("h2").text("US Flights: relative delays per carrier in " + year);
+          //update y-axes
+          var y = myChart.axes[1]
+          y.measure = "total_delay_rel"
+          y.tickFormat = ',.2f';
+          myChart.data = dimple.filterData(data, "year", [String(year)]);
+          myChart.draw();
+      }
+      
+      //add button for each year 
+      var years = [2010, 2011, 2012, 2013, 2014, 2015];
+      var buttons = d3.select("body")
+              .append("div")
+              .attr("class", "years_buttons")
+              .selectAll("div")
+              .data(years)
+              .enter()
+              .append("div")
+              .style("background", "gray")
+              .text(function(d) {
+                  return d;
+              });
+
+      buttons.on("click", function(d) {
+        //deselect all buttons, before selecting the button that is clicked
+        d3.select(".years_buttons")
+            .selectAll("div")
+            .transition()
+            .style("background", "gray");
+        d3.select(this)
+          .transition()
+          .style("background", "lightBlue");
+
+        //update the plot  
+        update(d);
+      });//end onclick
+      
+      //add select box to choose type of delay
+      var delays = ["Option 1", "Option 2", "Option 3"];
+      
+      var select = d3.select('body')
+        .append('select')
+  	    .attr('class','select')
+        .on('change', onchange);
+      
+      var options = select
+        .selectAll('option')
+      	.data(delayTypes).enter()
+      	.append('option')
+      		.text(function (d) { return d; });
+      
+      function onchange() {
+      	var selectValue = d3.select('select').property('value');
+      	//console.log(selectValue);
+      }
+
+    };//end draw
+    
+    </script>
+  </head>
+<body>
+</body>
+</html>

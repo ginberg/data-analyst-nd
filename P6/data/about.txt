@@ -1,0 +1,4 @@
+Flights 
+The data set which contains information on United State flight delays and performance comes from RITA. You can download the data directly from RITA or as zipped csv files from the Flights link. The files on the Flights link are organized by year and are more compressed than the originals.  Additional details about the data can be found at here.
+
+Investigate the performance of flights over time or simply look at data for a given year and create a graphic that showcases your finding(s).
