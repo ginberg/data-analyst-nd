@@ -24,10 +24,15 @@
         padding: 3px;
         margin: 7px;
       }
-      
+      div.info {
+         position: fixed;
+         left: 250px;
+         width: 1400px;
+      }
       svg {
         position: absolute;
-        left: 150px;
+        top: 125px;
+        left: 280px;
       }
       
       .tooltip {
@@ -41,7 +46,16 @@
         top: 350px;
         left: 50px;
       }
-      
+      .select_delay {
+        position: fixed;
+        top: 300px;
+        left: 50px;
+      }
+      .explain_delay {
+        position: fixed;
+        top: 500px;
+        left: 20px;
+      }
     </style>
     <script type="text/javascript">
     
@@ -56,7 +70,6 @@
     }
     
     function mouseover_f(d) {
-      //console.log("onmouseover");
       d3.select(this).style("stroke", "black");
       var tooltip = d3.select(".tooltip");
       tooltip.transition().style("opacity", 1);
@@ -80,16 +93,55 @@
       var row = rows[0];
       var names = Object.keys(row);
       delayTypes = names.filter(function(name) { return name.endsWith("delay")});
-      delayTypes = delayTypes.reverse();
-      console.log(delayTypes);
-      console.log(carrierMap);
       draw(rows);
     });
     
+    //set header text
+    function setHeaderText(year, delayType){
+      var h2 = d3.select("body").select("h2");
+      var text = "US Flights: relative "+  getDelayText(delayType) + " for airline carriers in " +  getYearText(year);
+      if (h2.empty()){
+        d3.select("body").append("h2").text(text);
+      } else{
+        d3.select("body").select("h2").text(text);
+      }
+    }
+    
+    //return the text belonging to a numeric year
+    function getYearText(year){
+      if (year == -1){
+        return "2010-2015";
+      } else{
+        return year;
+      }
+    }
+    
+    //return a human readable delay type
+    function getDelayText(type){
+      if (type == "total_delay"){
+        return "total delay";
+      }else if (type == "carrier_delay"){
+        return "carrier delay";
+      }else if (type == "weather_delay"){
+        return "weather delay";
+      }else if (type == "nas_delay"){
+        return "NAS delay";
+      }else if (type == "security_delay"){
+        return "security delay";
+      }else if (type == "late_aircraft_delay"){
+        return "aircraft delay";
+      }
+    }
+    
     //draw the plot
     function draw(data) {
-      d3.select("body").append("h2").text("US Flight delays per carrier in 2010-2015");
+      //keep state of selected year and delay type
+      var selectedYear = -1; //this means all years, must be numeric
+      var selectedDelay = "total_delay" //total delay
+
+      setHeaderText(selectedYear, selectedDelay);
       
+      d3.select("body").append("div").attr("class", "info").html("A flight's on-time performance can be affected by delays, fight cancellations and diversions. Delays can be categorized into: Air Carrier, Extreme Weather, National Aviation System (NAS), Security and Late-arriving aircraft. See" + "<a href='http://www.rita.dot.gov/bts/help/aviation/html/understanding.html'> RITA -Understanding flight delays and cancellations</a>" + "<br/>" + "Flight data is from January 2010 to January 2016. The chart below compares flight performance between Airline Carrier for a certain delay type in a given period.");
       var tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("opacity", 0); 
@@ -115,19 +167,8 @@
         .on("mouseover", mouseover_f)
         .on("mouseout", mouseout_f);
       
-      //update graph to selected year
-      function update(year) {
-          d3.select("body").select("h2").text("US Flights: relative delays per carrier in " + year);
-          //update y-axes
-          var y = myChart.axes[1]
-          y.measure = "total_delay_rel"
-          y.tickFormat = ',.2f';
-          myChart.data = dimple.filterData(data, "year", [String(year)]);
-          myChart.draw();
-      }
-      
       //add button for each year 
-      var years = [2010, 2011, 2012, 2013, 2014, 2015];
+      var years = [-1, 2010, 2011, 2012, 2013, 2014, 2015];
       var buttons = d3.select("body")
               .append("div")
               .attr("class", "years_buttons")
@@ -135,9 +176,18 @@
               .data(years)
               .enter()
               .append("div")
-              .style("background", "gray")
+              .style({
+                background: function(d) {
+                  if(d == -1){
+                    return "lightBlue";
+                  } else { return "gray";}
+                }
+              })
               .text(function(d) {
-                  return d;
+                if(d == -1){
+                  return "2010-2015"
+                }
+                return d;
               });
 
       buttons.on("click", function(d) {
@@ -151,12 +201,23 @@
           .style("background", "lightBlue");
 
         //update the plot  
-        update(d);
+        updatePlotByYear(d);
       });//end onclick
       
       //add select box to choose type of delay
-      var delays = ["Option 1", "Option 2", "Option 3"];
-      
+      d3.select("body")
+        .append("h4")
+        .attr("class", "select_delay")
+        .text("Select type of delay");
+      d3.select("body")
+        .append("div")
+        .attr("class", "explain_delay")
+        .html("total_delay = sum of all delays"+  "<br/>" +
+              "carrier_delay = delay by airline carrier"+  "<br/>" +
+              "weather_delay = delays by extreme weather"+  "<br/>" +
+              "nas_delay = delays by NAS"+  "<br/>" +
+              "security_delay = delay by security measures "+  "<br/>" +
+              "late_aircraft_delay = delay by late aircraft");
       var select = d3.select('body')
         .append('select')
   	    .attr('class','select')
@@ -170,9 +231,41 @@
       
       function onchange() {
       	var selectValue = d3.select('select').property('value');
-      	//console.log(selectValue);
+        updatePlotByDelayType(selectValue);
       }
-
+      
+      //update graph to selected year
+      function updatePlotByYear(year) {
+          setHeaderText(year,selectedDelay);
+          //update y-axes
+          var y = myChart.axes[1]
+          y.tickFormat = ',.2f';
+          //debugger;
+          if(year == -1){
+            y.measure = selectedDelay + ".pct"
+            myChart.data = dimple.filterData(data, "year", ["2010", "2011", "2012", "2013", "2014", "2015"]);
+          } else{
+            y.measure = selectedDelay + "_rel"
+            myChart.data = dimple.filterData(data, "year", [String(year)]);
+          }
+          myChart.draw();
+          selectedYear = year;
+      }
+      
+      //update graph to selected delay type
+      function updatePlotByDelayType(delayType) {
+          setHeaderText(selectedYear, delayType);
+          //update y-axes
+          var y = myChart.axes[1]
+          if (selectedYear == -1){
+            y.measure = delayType + ".pct";
+          } else{
+            y.measure = delayType + "_rel"; 
+          }
+          y.tickFormat = ',.2f';
+          myChart.draw();
+          selectedDelay = delayType
+      }
     };//end draw
     
     </script>
