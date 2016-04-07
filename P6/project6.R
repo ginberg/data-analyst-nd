@@ -1,9 +1,9 @@
 library(ggplot2)
 library(caroline)
 
-#read
-df <- read.csv("data/246437956_122015_1436_airline_delay_causes.csv", header = TRUE)
-
+#read and select 10 years
+df <- read.csv("data/829143389_12016_37_airline_delay_causes.csv", header = TRUE)
+df <- df[!df$year %in% c(2004,2005,2006,2016),]
 #explore
 #str(df)
 #summary(df)
@@ -44,16 +44,20 @@ for (i in 1:length(years)){
     df_by_carrier_delay_year <- delays_per_year[,c(delayType)]
     total <- sum(df_by_carrier_delay_year)
     delayVariable <- paste0(delayType,"_rel")
-    delays_per_year[[delayVariable]] <- df_by_carrier_delay_year / total
+    delays_per_year[[delayVariable]] <- 100 * df_by_carrier_delay_year / total
   }
   df_by_carrier_total <- merge(df_by_carrier_total, delays_per_year, all=TRUE)
 }
 
 #add relative delays for all years
-df_by_carrier_total <- pct(df_by_carrier_total, c("total_delay", "carrier_delay", "weather_delay", "nas_delay", "security_delay", "late_aircraft_delay"))
+df_by_carrier_total <- pct(df_by_carrier_total, delayTypes)
+for (delayType in delayTypes){
+  delayVariable <- paste0(delayType,".pct")
+  df_by_carrier_total[[delayVariable]] <- 100 * df_by_carrier_total[[delayVariable]]
+}
 
 #write processed df to file
-write.csv(df_by_carrier_total, "data/246437956_122015_1436_airline_delay_causes_result.csv", row.names = FALSE)
+write.csv(df_by_carrier_total, "data/airline_delay_causes_result.csv", row.names = FALSE)
 
 #generate a sample set to increase development speed
 #df_result <- df_by_carrier[sample(nrow(df_by_carrier), 100),]

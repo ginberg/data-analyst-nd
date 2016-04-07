@@ -1,0 +1,225 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/dimple.v2.0.0.min.js"></script>
+  <style>
+      h3 {
+        margin-left: 200px;
+        color: black;
+      }
+      #info {
+         margin-left: 200px;
+         width: 700px;
+      }
+  </style>
+  <script type="text/javascript">
+      /* D3.js setup code*/
+      "use strict";
+      var margin = 75;
+      var width = 1400 - margin;
+      var height = 800 - margin;
+      var plotWidth = 800;
+      var plotHeight = 500;
+      
+      //draw the plot
+      function draw(data, carrierMap) {
+          var svg = dimple.newSvg("#chartContainer", width + margin, height + margin);
+   
+          //keep state of selected year and delay type
+          var selectedYear = -1; //this means all years, must be numeric
+          var selectedDelay = "total_delay" //total delay
+          
+          //debugger;
+          
+          // Create the indicator chart on the right of the main chart
+          var indicator = new dimple.chart(svg, data);
+
+          // Pick blue as the default and orange for the selected month
+          var defaultColor = indicator.defaultColors[0];
+          var indicatorColor = indicator.defaultColors[2];
+
+          // The frame duration for the animation in milliseconds
+          var frame = 2000;
+          var firstTick = true;
+          var tickcount = 0;
+
+          // Place the indicator bar chart to the right
+          indicator.setBounds(30, 30, 153, 311);
+
+          // Add dates along the y axis
+          var y = indicator.addCategoryAxis("y", "year");
+          y.addOrderRule("Date", "Desc");
+
+          // Use sales for bar size and hide the axis
+          var x = indicator.addMeasureAxis("x", "total_delay");
+          x.hidden = true;
+
+          // Add the bars to the indicator and add event handlers
+          var s = indicator.addSeries(null, dimple.plot.bar);
+          s.addEventHandler("click", onClick);
+          // Draw the side chart
+          indicator.draw();
+
+          // Remove the title from the y axis
+          y.titleShape.remove();
+
+          // Remove the lines from the y axis
+          y.shapes.selectAll("line,path").remove();
+
+          // Move the y axis text inside the plot area
+          y.shapes.selectAll("text")
+                  .style("text-anchor", "start")
+                  .style("font-size", "11px")
+                  .attr("transform", "translate(18, 0.5)");
+
+          // This block simply adds the legend title. I put it into a d3 data
+          // object to split it onto 2 lines.  This technique works with any
+          // number of lines, it isn't dimple specific.
+          svg.selectAll("title_text")
+                  .data([""])
+                  .enter()
+                  .append("text")
+                  .attr("x", 30)
+                  .attr("y", function (d, i) { return 15 + i * 12; })
+                  .style("font-family", "sans-serif")
+                  .style("font-size", "10px")
+                  .style("color", "Black")
+                  .text(function (d) { return d; });
+
+          //Manually set the bar colors
+          s.shapes
+          .attr("rx", 10)
+          .attr("ry", 10)
+          .style("fill", function (d) { return (d.y === '2010' ? indicatorColor.fill : defaultColor.fill) })
+          .style("stroke", function (d) { return (d.y === '2010' ? indicatorColor.stroke : defaultColor.stroke) })
+          .style("opacity", 0.4);
+
+          // Draw the main chart
+          var myChart = new dimple.chart(svg, data);
+          myChart.setBounds(250, 50, plotWidth, plotHeight);
+          //add title
+          svg.append("text")
+                    .attr("x", myChart._xPixels() + myChart._widthPixels() / 2)
+                    .attr("y", myChart._yPixels() - 10)
+                    .style("text-anchor", "middle")
+                    .style("font-family", "helvetica, sans-serif")
+                    .style("font-size", "18px")
+                    .style("font-weight", "bold")
+                    .text(getTitleText(selectedYear, selectedDelay));
+          
+          //add labels for axes
+          var xaxis = myChart.addCategoryAxis("x", "carrier");
+          xaxis.title = "Airline Carrier";
+          xaxis.addOrderRule("carrier", false);
+          var yaxis = myChart.addMeasureAxis("y", "total_delay_rel");
+          yaxis.title = "Relative delay (%)";
+          yaxis.tickFormat = ',.2f';
+          var myPlot = myChart.addSeries(null, dimple.plot.bar);
+          //myChart.addLegend(10, 10, 500, 30, "left", myPlot);
+          myChart.draw();
+          myPlot.getTooltipText = function (e) {
+            return [carrier_info(e)];
+          };
+          //highlight WN
+          d3.selectAll(".dimple-WN").style("fill", "red");
+
+          // Add a storyboard to the main chart and set the tick event
+          var story = myChart.setStoryboard("year", onTick);
+          // Change the frame duration
+          story.frameDuration = frame;
+          // Order the storyboard by date
+          story.addOrderRule("year");
+
+          // Draw the main chart
+          myChart.draw();
+
+          // Orphan the legends as they are consistent but by default they
+          // will refresh on tick
+          myChart.legends = [];
+          // Remove the storyboard label because the chart will indicate the
+          // current month instead of the label
+          story.storyLabel.remove();
+
+          // On click of the side chart
+          function onClick(e) {
+              //debugger;
+              story.goToFrame(e.yValue);
+              story.pauseAnimation();
+          }
+
+          // On tick of the main charts storyboard
+          function onTick(e) {
+              if (!firstTick) {
+                  // Color all shapes the same
+                  s.shapes
+                    .transition()
+                    .duration(frame / 2)
+                    .style("fill", function (d) { return (d.y === e ? indicatorColor.fill : defaultColor.fill) })
+                    .style("stroke", function (d) { return (d.y === e ? indicatorColor.stroke : defaultColor.stroke) });
+                  tickcount += 1;
+              }
+              firstTick = false;
+              //only place it once (5 years)
+              if (tickcount >= 8) {
+                story.stopAnimation();
+              }
+          }
+      }//end draw
+      
+      function carrier_info(d) {
+        return carrierMap[d.cx] + " - " + (d.cy).toFixed(2) + " %";
+      }
+      
+      //get header text
+      function getTitleText(year, delayType){
+        return "Relative delays between airline carriers";
+      }
+      
+      //return a human readable delay type
+      function getDelayText(type){
+        if (type == "total_delay"){
+          return "total delay";
+        }else if (type == "carrier_delay"){
+          return "carrier delay";
+        }else if (type == "weather_delay"){
+          return "weather delay";
+        }else if (type == "nas_delay"){
+          return "NAS delay";
+        }else if (type == "security_delay"){
+          return "security delay";
+        }else if (type == "late_aircraft_delay"){
+          return "aircraft delay";
+        }
+      }
+      
+    //return the text belonging to a numeric year
+    function getYearText(year){
+      if (year == -1){
+        return "2010-2015";
+      } else{
+        return year;
+      }
+    }
+      
+  </script>
+</head>
+<body>
+  <h3>US flight delays</h3>
+  <div id="info">
+    In a hurry? Don't fly with SouthWest Airlines, they have more delays than most other carriers.
+  </div>
+  <div id="chartContainer">
+  </div>
+  <script type="text/javascript">
+      //Use D3 to load the CSV file and pass the contents of it to the draw function
+      var carrierMap = {};
+      d3.csv('data/airline_delay_causes_result.csv', function(error, rows) {
+        rows.forEach(function(d){
+          carrierMap[d.carrier] = [d.carrier_name];
+        });
+        draw(rows, carrierMap);
+      });
+  </script>
+</body>
+</html>
