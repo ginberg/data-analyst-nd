@@ -7,6 +7,7 @@ output: html_document
 I analyzed the delays of airlines over the years 2007 until 2016 per carrier. Using the total delay time for a year, the relative delay for airlines can be calculated and airlines 
 can be compared. Southwest Airlines is consistenly one of the airlines with the highest delay for these years.
 
+Visualization available at <http://bl.ocks.org/ginberg/raw/c1640b234c31f0f1a1c7>
 I have downloaded the data from <http://www.transtats.bts.gov/ot_delay/OT_DelayCause1.asp?pn=1>
 
 ###Design
@@ -58,9 +59,10 @@ in chrome and firefox.
 * moved the RITA link to README, since it is background information that is not directly relevant in the plot
  
 ### Used resources
-http://www.d3js.org/
-http://www.dimplejs.org/
-http://www.udacity.com/
-http://www.stackoverflow.com/
-http://www.rita.dot.gov/bts/help/aviation/html/understanding.html
+
+* http://www.d3js.org/
+* http://www.dimplejs.org/
+* http://www.udacity.com/
+* http://www.stackoverflow.com/
+* http://www.rita.dot.gov/bts/help/aviation/html/understanding.html
 
