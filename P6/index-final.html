@@ -26,12 +26,6 @@
       function draw(data, carrierMap) {
           var svg = dimple.newSvg("#chartContainer", width + margin, height + margin);
    
-          //keep state of selected year and delay type
-          var selectedYear = -1; //this means all years, must be numeric
-          var selectedDelay = "total_delay" //total delay
-          
-          //debugger;
-          
           // Create the indicator chart on the right of the main chart
           var indicator = new dimple.chart(svg, data);
 
@@ -40,7 +34,7 @@
           var indicatorColor = indicator.defaultColors[2];
 
           // The frame duration for the animation in milliseconds
-          var frame = 2000;
+          var frame = 1000;
           var firstTick = true;
           var tickcount = 0;
 
@@ -91,8 +85,8 @@
           s.shapes
           .attr("rx", 10)
           .attr("ry", 10)
-          .style("fill", function (d) { return (d.y === '2010' ? indicatorColor.fill : defaultColor.fill) })
-          .style("stroke", function (d) { return (d.y === '2010' ? indicatorColor.stroke : defaultColor.stroke) })
+          .style("fill", function (d) { return (d.y === '2007' ? indicatorColor.fill : defaultColor.fill) })
+          .style("stroke", function (d) { return (d.y === '2007' ? indicatorColor.stroke : defaultColor.stroke) })
           .style("opacity", 0.4);
 
           // Draw the main chart
@@ -106,11 +100,11 @@
                     .style("font-family", "helvetica, sans-serif")
                     .style("font-size", "18px")
                     .style("font-weight", "bold")
-                    .text(getTitleText(selectedYear, selectedDelay));
+                    .text(getTitleText());
           
           //add labels for axes
           var xaxis = myChart.addCategoryAxis("x", "carrier");
-          xaxis.title = "Airline Carrier";
+          xaxis.title = "Airline";
           xaxis.addOrderRule("carrier", false);
           var yaxis = myChart.addMeasureAxis("y", "total_delay_rel");
           yaxis.title = "Relative delay (%)";
@@ -160,7 +154,7 @@
                   tickcount += 1;
               }
               firstTick = false;
-              //only place it once (5 years)
+              //only place it once 
               if (tickcount >= 8) {
                 story.stopAnimation();
               }
@@ -172,42 +166,15 @@
       }
       
       //get header text
-      function getTitleText(year, delayType){
-        return "Relative delays between airline carriers";
+      function getTitleText(){
+        return "Relative delays between airlines";
       }
-      
-      //return a human readable delay type
-      function getDelayText(type){
-        if (type == "total_delay"){
-          return "total delay";
-        }else if (type == "carrier_delay"){
-          return "carrier delay";
-        }else if (type == "weather_delay"){
-          return "weather delay";
-        }else if (type == "nas_delay"){
-          return "NAS delay";
-        }else if (type == "security_delay"){
-          return "security delay";
-        }else if (type == "late_aircraft_delay"){
-          return "aircraft delay";
-        }
-      }
-      
-    //return the text belonging to a numeric year
-    function getYearText(year){
-      if (year == -1){
-        return "2010-2015";
-      } else{
-        return year;
-      }
-    }
-      
   </script>
 </head>
 <body>
   <h3>US flight delays</h3>
   <div id="info">
-    In a hurry? Don't fly with SouthWest Airlines, they have more delays than most other carriers.
+    In a hurry? Don't fly with SouthWest Airlines, they have consistently more delays than most other airlines.
   </div>
   <div id="chartContainer">
   </div>
