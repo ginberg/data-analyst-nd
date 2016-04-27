@@ -12,11 +12,16 @@ calcSD <- function(p,n){
 #sd gross conversion, calculate with binomial distribution
 sample_size <- 5000
 n <- sample_size * df$ct_prob
-calcSD(df$enroll_prob, n)
+gross_sd <- calcSD(df$enroll_prob, n)
 
 #sd net conversion
 n <- sample_size * df$ct_prob
-calcSD(df$payment_click_prob, n)
+net_sd <- calcSD(df$payment_click_prob, n)
+
+sd <- as.data.frame(matrix(nrow = 2, ncol = 2))
+colnames(sd) <- c("metric", "standard deviation")
+sd[1,] <- c("gross conversion", gross_sd)
+sd[2,] <- c("net conversion", net_sd)
 
 #samplesize
 samplesize <- function(alpha, beta, p, dmin) {
@@ -33,6 +38,8 @@ gross_sample_size <- round(samplesize(0.05, 0.20, 0.20625, 0.01))
 
 #net
 net_sample_size <- round(samplesize(0.05, 0.20, 0.1093125, 0.0075))
+
+
 
 #calculate pageviews by click through rate and multiply by 2 because sample size is per variation 
 gross_pageviews <- gross_sample_size * (1/df$ct_prob) * 2
