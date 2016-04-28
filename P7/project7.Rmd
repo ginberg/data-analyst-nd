@@ -64,65 +64,97 @@ sd
 When the unit of analysis is equal to the unit of division, the analytical estimate is likely to match the empirical variance. For both metrics, the unit of division and unit of analysis is the cookie. So, the analytical estimate can be used for these metrics.
 
 ### Sizing
-Number of Samples vs. Power
-Indicate whether you will use the Bonferroni correction during your analysis phase, and give the number of pageviews you will need to power you experiment appropriately. (These should be the answers from the "Calculating Number of Pageviews" quiz.)
+
+The Bonfessoni correction is a method used to counteract the problem of incorrectly rejecting the null hypothesis in multiple comparisions. I have decided not to use the Bonfessoni correction, since it is substantially conservative in situations where the tests are highly correlated. The evaluation metrics are highly correlated because they are all direct or indirectly related to the number of clicks  on the "Free trial" button.
+I have used the [online calculator](http://www.evanmiller.org/ab-testing/sample-size.html) to retrieve the sample size of the metrics. All calculations have been done with alpha=5% and beta=20%. The pageviews for the metrics can be found below.
 
 ```{r, echo=FALSE}
-samplesize <- function(alpha, beta, p, dmin) {
-  z.alpha <- qnorm(1 - alpha/2)
-  z.beta <- qnorm(1 - beta)
-  se.null.numerator <- sqrt(2*p*(1 - p))
-  se.alt.numerator <- sqrt(p*(1 - p) + (p + dmin)*(1 - (p + dmin)))
-  size <- ((z.alpha*se.null.numerator + z.beta*se.alt.numerator) / dmin)^2
-  return(size)
-}
-#online calculator: http://www.evanmiller.org/ab-testing/sample-size.html
+#get sample size with online calculator: http://www.evanmiller.org/ab-testing/sample-size.html
+#gross sample size: alpha = 0.05, beta = 0.20, p = 0.20625, dmin = 0.01
+gross_sample_size <- 25835
+#retention sample size: alpha = 0.05, beta = 0.20, p = 0.53, dmin = 0.01
+ret_sample_size <- 39115
+#net sample size: alpha = 0.05, beta = 0.20, p = 0.1093125, dmin = 0.0075
+net_sample_size <- 27413
 
-#gross
-gross_sample_size <- round(samplesize(0.05, 0.20, 0.20625, 0.01))
-
-#net
-net_sample_size <- round(samplesize(0.05, 0.20, 0.1093125, 0.0075))
-
-#calculate pageviews by click through rate and multiply by 2 because sample size is per variation 
+#calculate pageviews by click through\enrollment rate and multiply by 2 because sample size is per variation 
 gross_pageviews <- gross_sample_size * (1/df$ct_prob) * 2
+ret_pageviews <- ret_sample_size * (df$pageviews_pd / df$enrollments_pd) * 2
 net_pageviews <- net_sample_size * (1/df$ct_prob) * 2
+
 pageviews <- max(gross_pageviews, net_pageviews)
-pageviews
+pageviews_df <- as.data.frame(matrix(nrow = 2, ncol = 7))
+colnames(pageviews_df) <- c("metric", "baseline", "dmin", "sample size", "pageviews", "fraction (%)", "days")
+pageviews_df[1,] <- c("gross conversion", 0.20625, 0.01, gross_sample_size, gross_pageviews, 100, ceiling(gross_pageviews/ df$pageviews_pd))
+pageviews_df[2,] <- c("retention", 0.53, 0.01, ret_sample_size, ret_pageviews, 100, ceiling(ret_pageviews/ df$pageviews_pd))
+pageviews_df[3,] <- c("net conversion", 0.1093125, 0.0075, net_sample_size, net_pageviews, 100, ceiling(net_pageviews/ df$pageviews_pd))
+pageviews_df
 ```
 
-Duration vs. Exposure
-Indicate what fraction of traffic you would divert to this experiment and, given this, how many days you would need to run the experiment. (These should be the answers from the "Choosing Duration and Exposure" quiz.)
+###Duration vs. Exposure
 
-```{r, echo=FALSE}
-days <- ceiling(max(gross_pageviews, net_pageviews) / df$pageviews_pd)
-days
-```
-
-Give your reasoning for the fraction you chose to divert. How risky do you think this experiment would be for Udacity?
-
+The fraction of the traffic diverted to this experiment depends on the risk of the new feature (the 5 hour popup) and how long the experiment is allowed to run.
+I think the risk of this experiment is low, since it is only a small feature and the user is only confronted with it in one case (click on "free trial"). For this reason and to make the experiment run not too long, I would divert 100% of the traffice to the experiment. Since, there is a control and experiment group, that both get 50% of the traffic, still 50% will see the website without the new feature. 
+Even with 100% divertion, the experiment would take 119 days if we use all metrics. Because this would take too long to evaluate the new feature, retention is skipped as evaluation metric. With gross conversion and net conversion as metrics, the experiment will take 18 days.
 
 ## Experiment analysis
 
 ###Sanity checks
+
 For each of your invariant metrics, give the 95% confidence interval for the value you expect to observe, the actual observed value, and whether the metric passes your sanity check. (These should be the answers from the "Sanity Checks" quiz.)
 
 For any sanity check that did not pass, explain your best guess as to what went wrong based on the day-by-day data. Do not proceed to the rest of the analysis unless all sanity checks pass.
 
+```{r}
+#read exp and control data
+control <- read.csv("final_results_control.csv", header = TRUE)
+exp <- read.csv("final_results_experiment.csv", header = TRUE)
+total_pageviews_control <- sum(control$Pageviews)
+total_pageviews_exp <- sum(exp$Pageviews)
+getCI <- function(){
+  calcSD(0.5, (total_pageviews_control + total_pageviews_exp))  
+}
+
+
+sanity_df <- as.data.frame(matrix(nrow = 2, ncol = 4))
+colnames(sanity_df) <- c("metric", "lower bound", "upper bound", "observed", "passes")
+sanity_df[1,] <- c("gross conversion", gross_p[[3]], 5, "yes")
+sanity_df[2,] <- c("net conversion", net_p[[3]], 5, "no")
+sanity_df
+```
+
+
 
 ###Result analysis
+
+
+
 Effect Size Tests
 For each of your evaluation metrics, give a 95% confidence interval around the difference between the experiment and control groups. Indicate whether each metric is statistically and practically significant. (These should be the answers from the "Effect Size Tests" quiz.)
 
+
 Sign Tests
 For each of your evaluation metrics, do a sign test using the day-by-day data, and report the p-value of the sign test and whether the result is statistically significant. (These should be the answers from the "Sign Tests" quiz.)
+```{r}
+## sign test
+number_of_experiments <- 23
+gross_conversion_successes <- c(19)
+net_conversion_successes <- c(13)
+gross_p <- binom.test(gross_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
+net_p <- binom.test(net_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
+sign_df <- as.data.frame(matrix(nrow = 2, ncol = 4))
+colnames(sign_df) <- c("metric", "p value", "alpha (%)", "statistical significant")
+sign_df[1,] <- c("gross conversion", gross_p[[3]], 5, "yes")
+sign_df[2,] <- c("net conversion", net_p[[3]], 5, "no")
+sign_df
+```
 
 Summary
 State whether you used the Bonferroni correction, and explain why or why not. If there are any discrepancies between the effect size hypothesis tests and the sign tests, describe the discrepancy and why you think it arose.
 
 ###Recommendation
-Make a recommendation and briefly describe your reasoning.
 
+I recommend that the new feature of including the 5 or more hour suggestion to the start free trial page is not adopted. The A/B test shows that this will not have a practical significant effect on all evaluation metrics (net conversion).
 
 ##Follow-up experiment
 
