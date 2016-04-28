@@ -4,7 +4,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+options(width = 1200)
 ```
 ##Experiment overview
 
@@ -101,41 +102,87 @@ Even with 100% divertion, the experiment would take 119 days if we use all metri
 
 ###Sanity checks
 
-For each of your invariant metrics, give the 95% confidence interval for the value you expect to observe, the actual observed value, and whether the metric passes your sanity check. (These should be the answers from the "Sanity Checks" quiz.)
+For each of the invariant metrics, the 95% confidence interval is displayed below. The observed value should be within the confidence interval, so the null hypothesis that the metrics are equal between the control and experiment group is not rejected. As can be seen, for all cases the observed values are within the confidence interval for all metrics, so the sanity checks pass.
 
-For any sanity check that did not pass, explain your best guess as to what went wrong based on the day-by-day data. Do not proceed to the rest of the analysis unless all sanity checks pass.
-
-```{r}
+```{r, echo=FALSE}
 #read exp and control data
 control <- read.csv("final_results_control.csv", header = TRUE)
 exp <- read.csv("final_results_experiment.csv", header = TRUE)
+#calculate Confidence interval based on p, n and z. 
+calcCI <- function(p, n, z){
+  SD <- calcSD(p, n)  
+  ME <- z * SD
+  c(p - ME, p + ME)
+}
+#number of unique cookies to visit overview page=pageviews. p=0.5, n = total amount of clicks, z = 1.96 because of 5% confidence interval (two sided)
 total_pageviews_control <- sum(control$Pageviews)
 total_pageviews_exp <- sum(exp$Pageviews)
-getCI <- function(){
-  calcSD(0.5, (total_pageviews_control + total_pageviews_exp))  
-}
+cookies_CI <- calcCI(0.5, (total_pageviews_control + total_pageviews_exp), 1.96)
+cookies_observed <- total_pageviews_control / (total_pageviews_control + total_pageviews_exp)
 
+#number of unique cookies to click start free trial=clicks. p=0.5, n = total amount of clicks, z = 1.96 because of 5% confidence interval (two sided)
+total_clicks_control <- sum(control$Clicks)
+total_clicks_exp <- sum(exp$Clicks)
+clicks_CI <- calcCI(0.5, (total_clicks_control + total_clicks_exp), 1.96)
+clicks_observed <- total_clicks_control / (total_clicks_control + total_clicks_exp)
 
-sanity_df <- as.data.frame(matrix(nrow = 2, ncol = 4))
+#click through rate. Pooled SD is calculated by: sqrt(p * (1-p) / (1/nc + 1/nexp))s
+ctr_p_pooled <- (total_clicks_control + total_clicks_exp) / (total_pageviews_control + total_pageviews_exp)
+SD <- sqrt(ctr_p_pooled * (1 - ctr_p_pooled) * (1/ total_pageviews_control + 1/ total_pageviews_exp))
+ME <- 1.96 * SD
+ctr_observed <- (total_clicks_exp / total_pageviews_exp) - (total_clicks_control / total_pageviews_control)
+
+#result df
+sanity_df <- as.data.frame(matrix(nrow = 3, ncol = 5))
 colnames(sanity_df) <- c("metric", "lower bound", "upper bound", "observed", "passes")
-sanity_df[1,] <- c("gross conversion", gross_p[[3]], 5, "yes")
-sanity_df[2,] <- c("net conversion", net_p[[3]], 5, "no")
+sanity_df[1,] <- c("number of cookies", cookies_CI[1], cookies_CI[2], cookies_observed, "yes")
+sanity_df[2,] <- c("number of clicks", clicks_CI[1], clicks_CI[2], clicks_observed, "yes")
+sanity_df[3,] <- c("click through rate", -ME, ME, ctr_observed, "yes")
 sanity_df
 ```
 
-
-
 ###Result analysis
 
+For each evalation metric, I have calcualted the 95% confidence interval around the observed conversion rate. A metric is statistically significant if the value 0 is not in the interval, since in that case it is very unlikely that the difference is caused by chance.
+It is practical significant if the interval also doesn't contain the practical significance boundary.
+This gross conversion is statistically significant and also practically significant, however the results for the net conversion indicate there is no significant difference.
+
+```{r, echo=FALSE}
+
+#gross conversion. Pooled SD is calculated by: sqrt(p * (1-p) / (1/nc + 1/nexp))
+control_without_na <- control[!is.na(control$Enrollments) & !is.na(control$Payments),]
+exp_without_na <- exp[!is.na(exp$Enrollments) & !is.na(exp$Payments),]
+total_enrollements_control <- sum(control_without_na$Enrollments)
+total_enrollements_exp <- sum(exp_without_na$Enrollments)
+total_clicks_control <- sum(control_without_na$Clicks)
+total_clicks_exp <- sum(exp_without_na$Clicks)
+gross_p_pooled <- (total_enrollements_control + total_enrollements_exp) / (total_clicks_control + total_clicks_exp)
+gross_SD <- sqrt(gross_p_pooled * (1 - gross_p_pooled) * (1/ total_clicks_control + 1/ total_clicks_exp))
+gross_ME <- 1.96 * gross_SD
+gross_observed <- (total_enrollements_exp/total_clicks_exp) - (total_enrollements_control/total_clicks_control)
+
+#net conversion. Pooled SD is calculated by: sqrt(p * (1-p) / (1/nc + 1/nexp))
+total_payments_control <- sum(control_without_na$Payments)
+total_payments_exp <- sum(exp_without_na$Payments)
+net_p_pooled <- (total_payments_control + total_payments_exp) / (total_clicks_control + total_clicks_exp)
+net_SD <- sqrt(net_p_pooled * (1 - net_p_pooled) * (1/ total_clicks_control + 1/ total_clicks_exp))
+net_ME <- 1.96 * net_SD
+net_observed <- (total_payments_exp/total_clicks_exp) - (total_payments_control/total_clicks_control)
+
+#result df
+effect_df <- as.data.frame(matrix(nrow = 2, ncol = 6))
+colnames(effect_df) <- c("metric", "lower", "upper", "dmin", "stat significant", "prac significant")
+effect_df[1,] <- c("gross conversion", gross_observed - gross_ME, gross_observed + gross_ME, 0.01, "yes", "yes")
+effect_df[2,] <- c("net conversion", net_observed - net_ME, net_observed + net_ME, 0.0075, "no", "no")
+effect_df
+```
 
 
-Effect Size Tests
-For each of your evaluation metrics, give a 95% confidence interval around the difference between the experiment and control groups. Indicate whether each metric is statistically and practically significant. (These should be the answers from the "Effect Size Tests" quiz.)
+####Sign Tests
 
+Using the day-by-day data, a sign test can be done to check if the result is statistically significant. I have defined a success as when the conversion in the experiment is smaller than in the control since that is what is expected to happen. The p-value can be calculated by using the binomial test, with probability 0.5 and n the number of days measurued. 
 
-Sign Tests
-For each of your evaluation metrics, do a sign test using the day-by-day data, and report the p-value of the sign test and whether the result is statistically significant. (These should be the answers from the "Sign Tests" quiz.)
-```{r}
+```{r, echo=FALSE}
 ## sign test
 number_of_experiments <- 23
 gross_conversion_successes <- c(19)
@@ -143,14 +190,17 @@ net_conversion_successes <- c(13)
 gross_p <- binom.test(gross_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
 net_p <- binom.test(net_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
 sign_df <- as.data.frame(matrix(nrow = 2, ncol = 4))
-colnames(sign_df) <- c("metric", "p value", "alpha (%)", "statistical significant")
-sign_df[1,] <- c("gross conversion", gross_p[[3]], 5, "yes")
-sign_df[2,] <- c("net conversion", net_p[[3]], 5, "no")
+colnames(sign_df) <- c("metric", "p value", "alpha", "statistical significant")
+sign_df[1,] <- c("gross conversion", gross_p[[3]], 0.05, "yes")
+sign_df[2,] <- c("net conversion", net_p[[3]], 0.05, "no")
 sign_df
 ```
 
-Summary
-State whether you used the Bonferroni correction, and explain why or why not. If there are any discrepancies between the effect size hypothesis tests and the sign tests, describe the discrepancy and why you think it arose.
+The gross conversion is statistically significant because the p-value is smaller than alpha/2. The p-value for the net conversion is a lot bigger than alpha, so the results for this metric are not statistically significant.
+
+####Summary
+
+Both test indicate the same finding, namely that the metric gross conversion has a significant difference but the net conversion has not. I have decided not to use the Bonferroni correction, since this the metrics are highly correlated and the results would probably be too conservative.
 
 ###Recommendation
 
@@ -158,11 +208,5 @@ I recommend that the new feature of including the 5 or more hour suggestion to t
 
 ##Follow-up experiment
 
-Give a high-level description of the follow up experiment you would run, what your hypothesis would be, what metrics you would want to measure, what your unit of diversion would be, and your reasoning for these choices.
-
-
-
-
-
-
+A follow-up experiment can consist 
 
