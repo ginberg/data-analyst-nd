@@ -200,13 +200,18 @@ The gross conversion is statistically significant because the p-value is smaller
 
 ####Summary
 
-Both test indicate the same finding, namely that the metric gross conversion has a significant difference but the net conversion has not. I have decided not to use the Bonferroni correction, since this the metrics are highly correlated and the results would probably be too conservative.
+Both test indicate the same finding, namely that the metric gross conversion has a significant difference but the net conversion has not. I have decided not to use the Bonferroni correction, since the metrics are highly correlated and the results would probably be too conservative.
 
 ###Recommendation
 
-I recommend that the new feature of including the 5 or more hour suggestion to the start free trial page is not adopted. The A/B test shows that this will not have a practical significant effect on all evaluation metrics (net conversion).
+I recommend that the new feature of including the 5 or more hour popup to the start free trial page is not adopted. The A/B test shows that this will not have a practical significant effect on all evaluation metrics.
 
 ##Follow-up experiment
 
-A follow-up experiment can consist 
+A follow-up experiment should have as goal to reduce the number of frustrated students who cancel early in the course. Frustrations can arise from different sources like: the course costs more time than expected or it doesn't lead to the right knowledge/practice to find a job.
+I think students will be more motivated if the course is part of a package of courses that will lead to a job offer. For example an introduction to machine learning course is part of the machine learning track and if all classes are completed, the student can be sure that companies are interested in his skills.
+In the course overview page, the course will get some indication so the student can see that the course will offer this extra service for him.
+
+The number of pageviews probably won't change, if no time is invested to make the job service program known. So the number of unique ookies to visit the homepage can be used as an invariant metric.
+My hypothesis is that the click through rate, the number of unique cookies to click the "Start free trial" divided by the number of unique cookies to visit the homepage will increase. So, the click through rate is the evaluation metric. The unit of diversion is a cookie, since the user doesn't need to be logged in the user-id cannot be used in this case.
 
