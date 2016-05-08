@@ -30,8 +30,8 @@ Invariant metrics are metrics that are expected to remain (more or less) unchang
 * Number of clicks: The number of unique cookies to click the "Start free trial" are not expected to change, since the popup is not yet visible here, so this is an **invariant metric**.
 * Click-through-probability: Since both the number of cookies and the number of clicks are not expected to change, this is also an **invariant metric**.
 * Gross-conversion: The number of user-ids to enroll in the free trial is expected to drop, while the number of clicks is expected to stay the same, so this rate is expected to drop. This rate can therefore be used as an  **evaluation metric**. The practical significance boundary, which is the boundary in order to assess if the experiment is a success, is 0.01
-* Retention: This is an interesting metric because it can be an indication of how motivated users are. If less user-ids enroll, but more of these will remain enrolled, this rate will increase. However, from the analysis which I have done, it follows that it would take too long to gather enough data to evaluate this metric, so we can't use this etric.
-* Net conversion: The number of user-ids to remain enrolled past the 14-day boundary is expected to drop, while the number of clicks remains the same, so this rate is also expected to drop and can be used as an **evaluation metric**. The practical significance boundary is 0.0075
+* Retention: This is an interesting metric because it can be an indication of how motivated users are. If less user-ids enroll, but more of these will remain enrolled, this rate will increase. However, from the analysis which I have done, it follows that it would take too long to gather enough data to evaluate this metric, so unfortunately we can't use this metric.
+* Net conversion: The number of user-ids to remain enrolled past the 14-day boundary should not decrease because in that case the number of students in the paid enrollment is reduced. One might expect that if relatively more students are motivated and can spend the time, there will be more students that stay enrolled. The number of clicks remains the same, so the net conversion is expected not to decrease and hopefully increase. Because this metric will be influenced by the popup, it can be used as an **evaluation metric**. The practical significance boundary is 0.0075
 
 ### Measuring Standard Deviation
 
@@ -177,16 +177,15 @@ effect_df[2,] <- c("net conversion", net_observed - net_ME, net_observed + net_M
 effect_df
 ```
 
-
 ####Sign Tests
 
-Using the day-by-day data, a sign test can be done to check if the result is statistically significant. I have defined a success as when the conversion in the experiment is smaller than in the control since that is what is expected to happen. The p-value can be calculated by using the binomial test, with probability 0.5 and n the number of days measurued. 
+Using the day-by-day data, a sign test can be done to check if the result is statistically significant. I have defined a success as when the conversion in the experiment is greater than in the control. The p-value can be calculated by using the binomial test, with probability 0.5 and n the number of days measured. 
 
 ```{r, echo=FALSE}
 ## sign test
 number_of_experiments <- 23
-gross_conversion_successes <- c(19)
-net_conversion_successes <- c(13)
+gross_conversion_successes <- c(4)
+net_conversion_successes <- c(10)
 gross_p <- binom.test(gross_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
 net_p <- binom.test(net_conversion_successes, number_of_experiments, p = 0.5, alternative = c("two.sided", "less", "greater"), conf.level = 0.95)
 sign_df <- as.data.frame(matrix(nrow = 2, ncol = 4))
@@ -200,18 +199,32 @@ The gross conversion is statistically significant because the p-value is smaller
 
 ####Summary
 
-Both test indicate the same finding, namely that the metric gross conversion has a significant difference but the net conversion has not. I have decided not to use the Bonferroni correction, since the metrics are highly correlated and the results would probably be too conservative.
+Both test indicate the same finding, namely that the metric gross conversion has a significant difference but the net conversion has not. In order the launch, both of the metrics should have a significant difference, since the number of frustrated students should be recuced and the number of paid enrollments should not be reduced.
+The Bonferroni correction can be used to as a correction to reduce the type 1 errors (false positive). However, because both metrics should have a significant result (not just one of them) the type 1 error does not increase. So, using Bonferroni is not useful in this situation.
 
 ###Recommendation
 
-I recommend that the new feature of including the 5 or more hour popup to the start free trial page is not adopted. The A/B test shows that this will not have a practical significant effect on all evaluation metrics.
+The gross conversion has dropped, so this is according to what I expected. The difference is also practical and statistical significant.
+The net conversion is behaving different than expected, since most of the confidence interval is below 0 and the interval even contains the negative of the practical significance boundary. So the net conversion doesn't confirm to my expectations that it should not reduce. The net conversion if a blocker for the 5 or more hour popup to launch, so I recomment it is not adopted.
 
 ##Follow-up experiment
 
-A follow-up experiment should have as goal to reduce the number of frustrated students who cancel early in the course. Frustrations can arise from different sources like: the course costs more time than expected or it doesn't lead to the right knowledge/practice to find a job.
-I think students will be more motivated if the course is part of a package of courses that will lead to a job offer. For example an introduction to machine learning course is part of the machine learning track and if all classes are completed, the student can be sure that companies are interested in his skills.
-In the course overview page, the course will get some indication so the student can see that the course will offer this extra service for him.
+A follow-up experiment should have as goal to reduce the number of (frustrated) students who cancel early in the course. Frustrations can arise from different sources like: the course costs more time than expected, it doesn't lead to the right knowledge/practice to find a job or the course material/exercises are not totally clear.
+The 5 or more hour popup that is introduced in this experiment addresses the first source of frustration. In my follow-up experiment I would like to address the last item. In a case where the material or exercises is not totally clear, students can become demotivated especially when a course mentor is not directly available for an answer.
+Therefore, it would be good to put students for a certain course together in a group with a course mentor. A slack channel is created for that group, so that students can exchange messages between each other and the course mentor to get a quick response in case of a problem.
 
-The number of pageviews probably won't change, if no time is invested to make the job service program known. So the number of unique ookies to visit the homepage can be used as an invariant metric.
-My hypothesis is that the click through rate, the number of unique cookies to click the "Start free trial" divided by the number of unique cookies to visit the homepage will increase. So, the click through rate is the evaluation metric. The unit of diversion is a cookie, since the user doesn't need to be logged in the user-id cannot be used in this case.
+When students enroll in a course, they will be randomly assisgned to the control group or the the experiment group. In case a student is in the experiment group, he will be given a slack channel where he can communicate with other experiment group students.
 
+###Hypothesis
+The idea behind working in a group is that it will be more motivating and problems get solved quickly, and students will remain enrolled behind the 14 day boundary. The null hypothesis should be the opposite of what is expected, therfore it can be stated as: participation in a group with a course mentor will not increase the number of students enrolled beyond the 14 day free trial period.
+
+###Unit of Diversion
+The change between control and experiment group takes place after enrollment, so then a user account is already created and a user-id is available. A user-id is more reliable than a cookie, because a user can be tracked on multiple devices. Therefore the unit of diversion will be user-id.
+
+###Invariant Metric
+The distribution between the control and experiment group should be equal, since a student is randomly assigned to one of the groups. Therefore the user-id is a good choice as an invariant metric.
+
+###Evaluation Metric
+The evaluation metric for this experiment is retention, it is defined as the number of user-ids to remain enrolled past the 14-day boundary (and thus make at least one payment) divided by number of user-ids to complete checkout. (dmin=0.01)
+
+The experiment will be launched in case a statistical and practical signifcant change in retention is observed.
